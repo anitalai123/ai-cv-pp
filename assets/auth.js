@@ -7,7 +7,6 @@
 
 var PROTOTYPE_PASSWORD = 'star';
 var UNLOCK_KEY = 'build-a-cv-prototype-unlocked';
-var RETURN_KEY = 'build-a-cv-prototype-return-to';
 
 function prototypeUnlocked() {
   try {
@@ -27,11 +26,6 @@ function unlockPrototype() {
 (function () {
   var onPasswordPage = /(^|\/)password\.html$/.test(window.location.pathname);
   if (onPasswordPage || prototypeUnlocked()) return;
-
-  /* Remember where they were heading so a shared deep link still works. */
-  try {
-    sessionStorage.setItem(RETURN_KEY, window.location.pathname.split('/').pop() || 'index.html');
-  } catch (e) {}
 
   window.location.replace('password.html');
 })();

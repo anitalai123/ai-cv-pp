@@ -22,6 +22,20 @@ const NAV_ITEMS = [
   { href: '#', label: 'For employers' },
 ];
 
+/* The GOV.UK header on its own, with no service navigation, phase banner or
+   language toggle. Used by the password gate, which sits outside the service. */
+function renderMinimalHeader() {
+  return '' +
+    '<a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>' +
+    '<div class="govuk-header">' +
+      '<div class="govuk-header__container govuk-width-container">' +
+        '<div class="govuk-header__logo">' +
+          '<a href="https://www.gov.uk/" class="govuk-header__homepage-link">' + GOVUK_LOGO + '</a>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
 function renderHeader() {
   const navHtml = NAV_ITEMS.map(function (item) {
     const activeItem = item.active ? ' govuk-service-navigation__item--active' : '';
@@ -105,7 +119,11 @@ document.addEventListener('click', function (event) {
 });
 
 const header = document.querySelector('header[data-workhub-header]');
-if (header) header.innerHTML = renderHeader();
+if (header) {
+  header.innerHTML = header.dataset.workhubHeader === 'minimal'
+    ? renderMinimalHeader()
+    : renderHeader();
+}
 
 const footer = document.querySelector('footer[data-workhub-footer]');
 if (footer) footer.innerHTML = renderFooter();

@@ -57,7 +57,9 @@ jump back to the top.
 
 Every page loads `assets/auth.js` in the head, which sends you to
 `password.html` unless this browser session has been unlocked. The password is
-`star`, and entering it returns you to the page you originally asked for.
+`star`, and entering it takes you to the cover page. The password page shows a
+GOV.UK error summary and inline error on a wrong password, and carries the plain
+GOV.UK header only - no service navigation, phase banner or language toggle.
 
 This is a front-of-house gate for sharing the prototype, **not security**. The
 password is in the source in plain sight and the unlock flag is a
