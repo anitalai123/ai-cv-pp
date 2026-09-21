@@ -83,6 +83,13 @@ if (subjectsForm) {
     const items = education();
     const entry = Object.assign({}, Store.read().draftEducation, { subjects: subjects });
 
+    /* Nothing entered anywhere - do not add an empty card. */
+    if (isBlank(entry.courseType) && isBlank(entry.institution) && !subjects.length) {
+      Store.write({ draftEducation: null });
+      window.location.href = 'education-review.html';
+      return;
+    }
+
     if (typeof entry.editIndex === 'number') {
       const at = entry.editIndex;
       delete entry.editIndex;

@@ -93,6 +93,13 @@ if (responsibilitiesForm) {
     const items = workHistory();
     const job = Object.assign({}, Store.read().draftJob, { responsibilities: responsibilities });
 
+    /* Nothing entered anywhere - do not add an empty card. */
+    if (isBlank(job.jobTitle) && isBlank(job.employer) && !dateRange(job) && !responsibilities.length) {
+      Store.write({ draftJob: null });
+      window.location.href = 'work-history-review.html';
+      return;
+    }
+
     if (typeof job.editIndex === 'number') {
       const at = job.editIndex;
       delete job.editIndex;
@@ -114,8 +121,8 @@ if (gapForm) {
   gapForm.addEventListener('submit', function (event) {
     event.preventDefault();
     const values = formValues(gapForm);
-    const items = workHistory();
-    items.push({
+
+    const gap = {
       type: 'gap',
       gapTitle: values.gapTitle,
       startMonth: values.gapStartMonth,
@@ -124,8 +131,14 @@ if (gapForm) {
       endMonth: values.gapEndMonth,
       endYear: values.gapEndYear,
       summary: values.gapSummary,
-    });
-    saveWorkHistory(items);
+    };
+
+    if (!isBlank(gap.gapTitle) || !isBlank(gap.summary) || dateRange(gap)) {
+      const items = workHistory();
+      items.push(gap);
+      saveWorkHistory(items);
+    }
+
     window.location.href = 'work-history-review.html';
   });
 }
@@ -150,8 +163,12 @@ if (workHistorySummary) {
         return summaryCard(item.gapTitle || 'Your break', rows, index, 'gap');
       }
 
+      const details = [item.jobTitle, item.employer].filter(function (part) {
+        return !isBlank(part);
+      }).join(', ');
+
       const rows = [
-        ['Job Details', (item.jobTitle || 'Your job') + ', ' + (item.employer || 'Unknown Company')],
+        ['Job Details', details],
         ['Dates', dateRange(item)],
       ];
       (item.responsibilities || []).forEach(function (text, i) {

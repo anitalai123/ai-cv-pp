@@ -18,6 +18,7 @@ function monthYear(month, year) {
 
 function dateRange(item) {
   const from = monthYear(item.startMonth, item.startYear);
+  if (!from) return '';
   if (item.current) return from + ' to present';
   const to = monthYear(item.endMonth, item.endYear);
   return to ? from + ' to ' + to : from;
@@ -35,9 +36,16 @@ function formValues(form) {
   return values;
 }
 
-/* A GOV.UK summary card with Change and Remove actions. */
+function isBlank(value) {
+  return String(value == null ? '' : value).trim() === '';
+}
+
+/* A GOV.UK summary card with Change and Remove actions. Rows whose value was
+   left empty are dropped, so the card only shows what was actually entered. */
 function summaryCard(title, rows, index, kind) {
-  const rowsHtml = rows.map(function (row) {
+  const rowsHtml = rows.filter(function (row) {
+    return !isBlank(row[1]);
+  }).map(function (row) {
     return '<div class="govuk-summary-list__row">' +
       '<dt class="govuk-summary-list__key">' + escapeHtml(row[0]) + '</dt>' +
       '<dd class="govuk-summary-list__value">' + escapeHtml(row[1]) + '</dd>' +
