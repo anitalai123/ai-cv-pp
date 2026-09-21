@@ -17,11 +17,6 @@ body {
   font-size: 16px;
 }
 
-/* The live service renders the active nav item as a plain link, not bold. */
-.govuk-service-navigation__active-fallback {
-  font-weight: inherit;
-}
-
 /* Keep status tags on a single line so a narrow status column cannot break
    "Not started" or "Cannot start yet" across three or more lines. */
 .govuk-task-list__status {
