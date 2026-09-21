@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+  <head>
+    <meta charset="utf-8">
+    <title>Work history you added - Work Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
+    <link rel="icon" sizes="48x48" href="vendor/govuk/assets/images/favicon.ico">
+    <link rel="stylesheet" href="vendor/govuk/govuk-frontend.min.css">
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+  <body class="govuk-template__body">
+    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+
+    <header data-workhub-header></header>
+
+    <div class="govuk-width-container">
+      <a href="work-history.html" class="govuk-back-link">Back</a>
+
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-l">Work history</span>
+            <h1 class="govuk-heading-l">Work history you added</h1>
+
+            <div id="work-history-summary"></div>
+
+            <div class="govuk-button-group">
+              <a href="work-history-info.html" class="govuk-link">Add another job</a>
+              <a href="work-history-gaps-info.html" class="govuk-link">Add a gap between jobs</a>
+            </div>
+
+            <button type="button" class="govuk-button govuk-!-margin-top-4" data-module="govuk-button" id="work-history-done">Done</button>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer" data-workhub-footer></footer>
+
+    <script type="module" src="assets/chrome.js"></script>
+    <script src="assets/store.js"></script>
+    <script src="assets/flows.js"></script>
+    <script src="assets/work-history.js"></script>
+  </body>
+</html>

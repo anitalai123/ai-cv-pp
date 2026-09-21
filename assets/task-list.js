@@ -13,7 +13,7 @@ const TASK_SECTIONS = {
       id: 'workHistory',
       name: 'Work history',
       hint: 'Work experience, volunteering, or job gaps',
-      href: '#',
+      href: 'work-history.html',
     },
   ],
   'task-list-optional': [
@@ -27,7 +27,7 @@ const TASK_SECTIONS = {
       id: 'education',
       name: 'Education and training',
       hint: 'Educational or professional qualifications and courses',
-      href: '#',
+      href: 'education-info.html',
     },
     {
       id: 'skills',
@@ -59,12 +59,21 @@ const STATUS_TAGS = {
   completed: { text: 'Completed', classes: '' },
 };
 
+/* A section counts as done when it holds something: a non-empty string for the
+   free-text sections, or at least one entry for the list-based ones. An empty
+   array is truthy in JavaScript, so it has to be checked explicitly. */
+function hasContent(value) {
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === 'string') return value.trim().length > 0;
+  return Boolean(value);
+}
+
 function statusFor(task, state) {
   const requiredDone = TASK_SECTIONS['task-list-required'].every(function (t) {
-    return Boolean(state[t.id]);
+    return hasContent(state[t.id]);
   });
   if (task.needsRequired && !requiredDone) return 'cannot-start';
-  return state[task.id] ? 'completed' : 'not-started';
+  return hasContent(state[task.id]) ? 'completed' : 'not-started';
 }
 
 function renderStatus(status, id) {

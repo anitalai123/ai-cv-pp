@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+  <head>
+    <meta charset="utf-8">
+    <title>Add a gap between jobs - Work Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
+    <link rel="icon" sizes="48x48" href="vendor/govuk/assets/images/favicon.ico">
+    <link rel="stylesheet" href="vendor/govuk/govuk-frontend.min.css">
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+  <body class="govuk-template__body">
+    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+
+    <header data-workhub-header></header>
+
+    <div class="govuk-width-container">
+      <a href="work-history-gaps-info.html" class="govuk-back-link">Back</a>
+
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-l">Work history</span>
+            <h1 class="govuk-heading-l">Add a gap between jobs</h1>
+
+            <form id="gap-form" novalidate>
+            <div class="govuk-form-group">
+              <label class="govuk-label govuk-label--s" for="gapTitle">Title</label>
+              <div id="gapTitle-hint" class="govuk-hint">You can give it a general title - like 'career break'.</div>
+              <input class="govuk-input" id="gapTitle" name="gapTitle" type="text" aria-describedby="gapTitle-hint">
+            </div>
+            <div class="govuk-form-group">
+              <fieldset class="govuk-fieldset" role="group" aria-describedby="gapStart-date-hint">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Start date</legend>
+                <div id="gapStart-date-hint" class="govuk-hint">For example, March 2023. If you cannot remember exactly, enter an estimate.</div>
+                <div class="govuk-date-input" id="gapStart-date">
+                  <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                      <label class="govuk-label govuk-date-input__label" for="gapStart-month">Month</label>
+                      <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="gapStart-month" name="gapStartMonth" type="text" inputmode="numeric">
+                    </div>
+                  </div>
+                  <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                      <label class="govuk-label govuk-date-input__label" for="gapStart-year">Year</label>
+                      <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="gapStart-year" name="gapStartYear" type="text" inputmode="numeric">
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+            <div class="govuk-form-group">
+              <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Are you doing this currently?</legend>
+                <div class="govuk-radios" data-module="govuk-radios">
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="gapCurrent-yes" name="gapCurrent" type="radio" value="yes">
+                    <label class="govuk-label govuk-radios__label" for="gapCurrent-yes">Yes</label>
+                  </div>
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="gapCurrent-no" name="gapCurrent" type="radio" value="no" data-aria-controls="conditional-gapCurrent-no">
+                    <label class="govuk-label govuk-radios__label" for="gapCurrent-no">No</label>
+                  </div>
+                  <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-gapCurrent-no">
+            <div class="govuk-form-group">
+              <fieldset class="govuk-fieldset" role="group" aria-describedby="gapEnd-date-hint">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">End date</legend>
+                <div id="gapEnd-date-hint" class="govuk-hint">For example, 3 2023. If you cannot remember exactly, enter an estimate.</div>
+                <div class="govuk-date-input" id="gapEnd-date">
+                  <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                      <label class="govuk-label govuk-date-input__label" for="gapEnd-month">Month</label>
+                      <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="gapEnd-month" name="gapEndMonth" type="text" inputmode="numeric">
+                    </div>
+                  </div>
+                  <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                      <label class="govuk-label govuk-date-input__label" for="gapEnd-year">Year</label>
+                      <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="gapEnd-year" name="gapEndYear" type="text" inputmode="numeric">
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+              <p class="govuk-body">If you want to add a short explanation you can do that here. You can also mention any skills you might have gained in that time.</p>
+              <p class="govuk-body">For example, &lsquo;Caring for a family member. Helped the Parent-Teacher Association organise 3 successful fundraising events - demonstrating time management, communication and teamwork skills.&rsquo;</p>
+
+              <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="10000">
+                <div class="govuk-form-group">
+                  <label class="govuk-label govuk-label--s" for="gapSummary">Enter a summary</label>
+                  <textarea class="govuk-textarea govuk-js-character-count" id="gapSummary" name="gapSummary" rows="6" aria-describedby="gapSummary-info"></textarea>
+                </div>
+                <div id="gapSummary-info" class="govuk-hint govuk-character-count__message">
+                  You have 10,000 characters remaining
+                </div>
+              </div>
+
+              <button type="submit" class="govuk-button" data-module="govuk-button">Continue</button>
+            </form>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer" data-workhub-footer></footer>
+
+    <script type="module" src="assets/chrome.js"></script>
+    <script src="assets/store.js"></script>
+    <script src="assets/flows.js"></script>
+    <script src="assets/work-history.js"></script>
+  </body>
+</html>

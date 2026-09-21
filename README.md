@@ -20,13 +20,37 @@ works — nothing depends on a server.
 | `task-list.html` | `/cv/create/task-list` | Three sections, statuses derived from saved answers. |
 | `profile-info.html` | `/cv/create/profile/info` | Guidance page, including the "If you are using AI to help you" details. |
 | `profile.html` | `/cv/create/profile` | Character-counted textarea. **This is where AI feedback goes** — see the `<!-- AI feedback will go here -->` marker. |
+| `work-history.html` | `/cv/create/work-history` | What can be included, and the two ways in. |
+| `work-history-info.html` | `/cv/create/work-history/info` | Guidance before adding a job. |
+| `work-history-job.html` | dynamic route | Job title, employer, dates, "are you at this job now". |
+| `work-history-responsibilities.html` | dynamic route | Repeatable responsibilities, 1,500 characters each. |
+| `work-history-review.html` | `/cv/create/work-history/review` | Summary cards for jobs and gaps, with Change and Remove. |
+| `work-history-gaps-info.html` | `/cv/create/work-history/gaps/info` | Guidance before adding a gap. |
+| `work-history-gaps.html` | `/cv/create/work-history/gaps` | Title, dates and a summary of the gap. |
+| `education-info.html` | `/cv/create/education/info` | Guidance before adding a qualification. |
+| `education-type.html` | `/cv/create/education/type` | Qualification type and institution. |
+| `education-subjects.html` | dynamic route | Repeatable subject and grade pairs. |
+| `education-review.html` | `/cv/create/education/review` | Summary cards, with Change and Remove. |
 
-Personal profile flow: task list → `profile-info.html` → `profile.html` → Done →
-back to the task list with a "Personal Profile updated" success banner and the row
-marked Completed.
+Flows, each ending on Done and returning to the task list with a success banner
+and the row marked Completed:
 
-Every other task row is a dead link (`href="#"`), as are the header nav, footer
-links, sign in, Cymraeg, and the "preview how this section looks" link.
+- **Personal profile**: `profile-info.html` → `profile.html`
+- **Work history**: `work-history.html` → `work-history-info.html` →
+  `work-history-job.html` → `work-history-responsibilities.html` →
+  `work-history-review.html`. The gap branch runs
+  `work-history-gaps-info.html` → `work-history-gaps.html` and joins the same
+  review page.
+- **Education and training**: `education-info.html` → `education-type.html` →
+  `education-subjects.html` → `education-review.html`
+
+Jobs and gaps share one ordered list, so they interleave on the review page the
+way the live service shows them.
+
+Remaining task rows are dead links (`href="#"`), as are the header nav, footer
+links, sign in, Cymraeg, and the "preview how this section looks" link. Clicking
+one does nothing at all — `chrome.js` swallows the click so the page does not
+jump back to the top.
 
 ## How it is built
 
@@ -40,6 +64,10 @@ step and no dependencies.
   banner message in `sessionStorage`.
 - `assets/task-list.js` — the task list rows and their status tags. Add or reorder
   tasks in `TASK_SECTIONS`.
+- `assets/flows.js` — helpers shared by the flows: summary cards, date formatting
+  and the repeatable "Add another ..." inputs.
+- `assets/work-history.js` and `assets/education.js` — the two flows' form
+  handling and review pages.
 - `assets/styles.css` — the handful of Work Hub specific styles GOV.UK Frontend
   does not cover.
 
@@ -61,5 +89,12 @@ and may need correcting against the real thing:
    is set in a route chunk that only loads for a signed-in session.
 3. **The order of the two bullet lists** on `profile-info.html` relative to their
    intro paragraphs ("To use this section effectively:" and "Make sure you:").
+4. **Job and subject routes.** `/cv/create/work-history`, `/info`, `/review`,
+   `/gaps`, `/gaps/info`, `/education/info`, `/education/type` and
+   `/education/review` were confirmed against the live service. The job details,
+   responsibilities and subjects pages sit behind dynamic per-item routes that
+   could not be probed, so their filenames are my own.
+5. **"Type of qualification"** is spelled with a double space in the live
+   translation bundle. Treated as a typo and rendered with one.
 
 Error states are deliberately not built — happy path only.

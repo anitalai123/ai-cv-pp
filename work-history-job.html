@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+  <head>
+    <meta charset="utf-8">
+    <title>Add a job - Work Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
+    <link rel="icon" sizes="48x48" href="vendor/govuk/assets/images/favicon.ico">
+    <link rel="stylesheet" href="vendor/govuk/govuk-frontend.min.css">
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+  <body class="govuk-template__body">
+    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+
+    <header data-workhub-header></header>
+
+    <div class="govuk-width-container">
+      <a href="work-history-info.html" class="govuk-back-link">Back</a>
+
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-l">Work history</span>
+            <h1 class="govuk-heading-l">Add a job</h1>
+
+            <form id="job-form" novalidate>
+            <div class="govuk-form-group">
+              <label class="govuk-label govuk-label--s" for="jobTitle">Job title</label>
+              <div id="jobTitle-hint" class="govuk-hint">If the job was work experience or a volunteer, you can include it with your job title.</div>
+              <input class="govuk-input" id="jobTitle" name="jobTitle" type="text" aria-describedby="jobTitle-hint">
+            </div>
+            <div class="govuk-form-group">
+              <label class="govuk-label govuk-label--s" for="employer">Employer</label>
+              <div id="employer-hint" class="govuk-hint">This could be an agency or charity. Or if you worked for yourself, enter 'Self-employed'.</div>
+              <input class="govuk-input" id="employer" name="employer" type="text" aria-describedby="employer-hint">
+            </div>
+            <div class="govuk-form-group">
+              <fieldset class="govuk-fieldset" role="group" aria-describedby="start-date-hint">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Start date</legend>
+                <div id="start-date-hint" class="govuk-hint">For example, March 2023. If you cannot remember exactly, enter an estimate.</div>
+                <div class="govuk-date-input" id="start-date">
+                  <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                      <label class="govuk-label govuk-date-input__label" for="start-month">Month</label>
+                      <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="start-month" name="startMonth" type="text" inputmode="numeric">
+                    </div>
+                  </div>
+                  <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                      <label class="govuk-label govuk-date-input__label" for="start-year">Year</label>
+                      <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="start-year" name="startYear" type="text" inputmode="numeric">
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+            <div class="govuk-form-group">
+              <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Are you at this job now?</legend>
+                <div class="govuk-radios" data-module="govuk-radios">
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="current-yes" name="current" type="radio" value="yes">
+                    <label class="govuk-label govuk-radios__label" for="current-yes">Yes</label>
+                  </div>
+                  <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" id="current-no" name="current" type="radio" value="no" data-aria-controls="conditional-current-no">
+                    <label class="govuk-label govuk-radios__label" for="current-no">No</label>
+                  </div>
+                  <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-current-no">
+            <div class="govuk-form-group">
+              <fieldset class="govuk-fieldset" role="group" aria-describedby="end-date-hint">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">When did this job end?</legend>
+                <div id="end-date-hint" class="govuk-hint">For example, 3 2023. If you cannot remember exactly, enter an estimate.</div>
+                <div class="govuk-date-input" id="end-date">
+                  <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                      <label class="govuk-label govuk-date-input__label" for="end-month">Month</label>
+                      <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="end-month" name="endMonth" type="text" inputmode="numeric">
+                    </div>
+                  </div>
+                  <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                      <label class="govuk-label govuk-date-input__label" for="end-year">Year</label>
+                      <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="end-year" name="endYear" type="text" inputmode="numeric">
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+              <button type="submit" class="govuk-button" data-module="govuk-button">Continue</button>
+            </form>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer" data-workhub-footer></footer>
+
+    <script type="module" src="assets/chrome.js"></script>
+    <script src="assets/store.js"></script>
+    <script src="assets/flows.js"></script>
+    <script src="assets/work-history.js"></script>
+  </body>
+</html>
