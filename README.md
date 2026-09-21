@@ -16,7 +16,7 @@ works — nothing depends on a server.
 
 | File | Mirrors | Notes |
 | --- | --- | --- |
-| `index.html` | `/cv` | Start page. Also has a "reset all saved answers" link. |
+| `index.html` | — | Prototype cover page. Links to the task list and has a "Reset all saved answers" button. Not a page from the live service. |
 | `task-list.html` | `/cv/create/task-list` | Three sections, statuses derived from saved answers. |
 | `profile-info.html` | `/cv/create/profile/info` | Guidance page, including the "If you are using AI to help you" details. |
 | `profile.html` | `/cv/create/profile` | Character-counted textarea. **This is where AI feedback goes** — see the `<!-- AI feedback will go here -->` marker. |

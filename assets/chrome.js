@@ -17,7 +17,7 @@ const GOVUK_LOGO = `<svg focusable="false" role="img" xmlns="http://www.w3.org/2
 const NAV_ITEMS = [
   { href: '#', label: 'AI work assistant' },
   { href: '#', label: 'Find a job' },
-  { href: 'index.html', label: 'Build a CV', active: true },
+  { href: 'task-list.html', label: 'Build a CV', active: true },
   { href: '#', label: 'Action plan' },
   { href: '#', label: 'For employers' },
 ];

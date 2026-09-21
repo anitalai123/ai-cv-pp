@@ -2,7 +2,7 @@
 <html lang="en" class="govuk-template">
   <head>
     <meta charset="utf-8">
-    <title>Build a CV - Work Hub</title>
+    <title>AI CV Personal profile feedback prototype</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#0b0c0c">
     <link rel="icon" sizes="48x48" href="vendor/govuk/assets/images/favicon.ico">
@@ -19,32 +19,20 @@
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-two-thirds">
 
-            <h1 class="govuk-heading-l">Build a CV</h1>
-            <p class="govuk-body-l">Use this free service to build a professional CV</p>
+            <h1 class="govuk-heading-l">AI CV Personal profile feedback prototype</h1>
 
-            <p class="govuk-body">Use this service if you need to create and download a CV.</p>
-            <p class="govuk-body">If you already have a CV, you can use it to apply for jobs.</p>
-
-            <h2 class="govuk-heading-m">Before you start</h2>
-            <p class="govuk-body">You&rsquo;ll need:</p>
-            <ul class="govuk-list govuk-list--bullet">
-              <li>your work history</li>
-              <li>details of your qualifications</li>
-            </ul>
-            <p class="govuk-body">You can create and download a CV without an account. To upload, save, or continue editing a CV, sign in or create an account.</p>
-
-            <a href="task-list.html" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
-              Start now
-              <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
-                <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"/>
-              </svg>
+            <a href="task-list.html" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+              Go to task list
             </a>
 
             <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-            <p class="govuk-body-s">
-              Prototype controls:
-              <a class="govuk-link" href="#" id="reset-prototype">reset all saved answers</a>
-            </p>
+
+            <h2 class="govuk-heading-m">Prototype controls</h2>
+            <p class="govuk-body">Clears everything saved in this browser and returns every section to Not started.</p>
+
+            <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="reset-prototype">
+              Reset all saved answers
+            </button>
 
           </div>
         </div>
@@ -56,10 +44,10 @@
     <script type="module" src="assets/chrome.js"></script>
     <script src="assets/store.js"></script>
     <script>
-      document.getElementById('reset-prototype').addEventListener('click', function (event) {
-        event.preventDefault();
+      document.getElementById('reset-prototype').addEventListener('click', function () {
         Store.clear();
-        this.textContent = 'reset all saved answers - done';
+        this.textContent = 'Saved answers cleared';
+        this.disabled = true;
       });
     </script>
   </body>
