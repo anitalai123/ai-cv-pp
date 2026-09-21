@@ -27,3 +27,11 @@ body {
   white-space: nowrap;
   max-width: none;
 }
+
+/* Several GOV.UK classes set an explicit display, which beats the browser's
+   [hidden] rule - .govuk-error-message is one, so a hidden error still showed.
+   Make the attribute win wherever it is used. The accordion is excluded because
+   GOV.UK Frontend deliberately keeps its hidden sections displayed. */
+[hidden]:not(.govuk-accordion__section-content) {
+  display: none !important;
+}
