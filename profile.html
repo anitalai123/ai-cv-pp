@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+  <head>
+    <meta charset="utf-8">
+    <title>Write a personal profile - Work Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
+    <link rel="icon" sizes="48x48" href="vendor/govuk/assets/images/favicon.ico">
+    <link rel="stylesheet" href="vendor/govuk/govuk-frontend.min.css">
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+  <body class="govuk-template__body">
+    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+
+    <header data-workhub-header></header>
+
+    <div class="govuk-width-container">
+      <a href="profile-info.html" class="govuk-back-link">Back</a>
+
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+
+            <form id="profile-form" novalidate>
+              <span class="govuk-caption-l">Personal profile</span>
+              <h1 class="govuk-heading-l">Write a personal profile</h1>
+
+              <p class="govuk-body">Write 2 or 3 short sentences that:</p>
+              <ul class="govuk-list govuk-list--bullet">
+                <li>mention the job title, organisation or field you want to work in</li>
+                <li>outline your experience, personal qualities and transferable skills</li>
+                <li>show how your specific skills match the job description</li>
+              </ul>
+
+              <p class="govuk-body">For example:</p>
+              <div class="govuk-inset-text">
+                An experienced bookkeeper and administrator. Enthusiastic team player, with a flexible attitude and project management experience. During career break took the opportunity to further develop computer skills and now seeking to resume full-time employment within an accounts environment.
+              </div>
+
+              <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="1000">
+                <div class="govuk-form-group">
+                  <label class="govuk-label govuk-label--s" for="personal-profile">
+                    Write your personal profile
+                  </label>
+                  <textarea class="govuk-textarea govuk-js-character-count" id="personal-profile"
+                            name="personalProfile" rows="8"
+                            aria-describedby="personal-profile-info"></textarea>
+                </div>
+                <div id="personal-profile-info" class="govuk-hint govuk-character-count__message">
+                  You have 1,000 characters remaining
+                </div>
+              </div>
+
+              <!-- AI feedback will go here -->
+
+              <div class="govuk-inset-text">
+                You can <a class="govuk-link" href="#">preview</a> how this section looks.
+              </div>
+
+              <button type="submit" class="govuk-button" data-module="govuk-button">Done</button>
+            </form>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer" data-workhub-footer></footer>
+
+    <script type="module" src="vendor/govuk/govuk-frontend.min.js"></script>
+    <script src="assets/chrome.js"></script>
+    <script src="assets/store.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const textarea = document.getElementById('personal-profile');
+        textarea.value = Store.read().profile || '';
+        // GOV.UK Frontend has already counted an empty textarea by this point.
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+
+        document.getElementById('profile-form').addEventListener('submit', function (event) {
+          event.preventDefault();
+          Store.write({ profile: textarea.value.trim() });
+          Flash.set('Personal Profile updated');
+          window.location.href = 'task-list.html';
+        });
+      });
+    </script>
+  </body>
+</html>

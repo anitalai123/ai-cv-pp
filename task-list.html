@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+  <head>
+    <meta charset="utf-8">
+    <title>Build a CV - Tasks - Work Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
+    <link rel="icon" sizes="48x48" href="vendor/govuk/assets/images/favicon.ico">
+    <link rel="stylesheet" href="vendor/govuk/govuk-frontend.min.css">
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+  <body class="govuk-template__body">
+    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+
+    <header data-workhub-header></header>
+
+    <div class="govuk-width-container">
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+
+            <!-- Shown after completing a section, e.g. "Personal Profile updated" -->
+            <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
+                 aria-labelledby="success-banner-title" data-module="govuk-notification-banner"
+                 id="success-banner" hidden>
+              <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title" id="success-banner-title">Success</h2>
+              </div>
+              <div class="govuk-notification-banner__content">
+                <h3 class="govuk-notification-banner__heading" id="success-banner-text"></h3>
+              </div>
+            </div>
+
+            <h1 class="govuk-heading-l">Build a CV</h1>
+
+            <div class="govuk-notification-banner" role="region" aria-labelledby="sign-in-banner-title"
+                 data-module="govuk-notification-banner">
+              <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title" id="sign-in-banner-title">Important</h2>
+              </div>
+              <div class="govuk-notification-banner__content">
+                <h3 class="govuk-notification-banner__heading">Sign in to save your progress</h3>
+                <p class="govuk-body govuk-!-margin-bottom-0">You can build a CV without an account, but you will lose your progress if you leave this page.</p>
+              </div>
+            </div>
+
+            <h2 class="govuk-heading-m">1. Complete required sections</h2>
+            <ul class="govuk-task-list" id="task-list-required"></ul>
+
+            <h2 class="govuk-heading-m">2. Choose optional sections</h2>
+            <p class="govuk-body">Completing these can help your CV get noticed</p>
+            <ul class="govuk-task-list" id="task-list-optional"></ul>
+
+            <h2 class="govuk-heading-m">3. Check and download</h2>
+            <ul class="govuk-task-list" id="task-list-finish"></ul>
+
+            <a href="#" role="button" draggable="false" class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">
+              Sign in to save
+            </a>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer" data-workhub-footer></footer>
+
+    <script type="module" src="vendor/govuk/govuk-frontend.min.js"></script>
+    <script src="assets/chrome.js"></script>
+    <script src="assets/store.js"></script>
+    <script src="assets/task-list.js"></script>
+  </body>
+</html>

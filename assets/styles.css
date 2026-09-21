@@ -1,0 +1,34 @@
+/* Prototype-only styles. Everything else comes from GOV.UK Frontend. */
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.govuk-main-wrapper {
+  flex-grow: 1;
+}
+
+.workhub-language {
+  padding: 10px 0;
+  text-align: right;
+  font-family: "GDS Transport", arial, sans-serif;
+  font-size: 16px;
+}
+
+/* The live service renders the active nav item as a plain link, not bold. */
+.govuk-service-navigation__active-fallback {
+  font-weight: inherit;
+}
+
+/* Keep status tags on a single line so a narrow status column cannot break
+   "Not started" or "Cannot start yet" across three or more lines. */
+.govuk-task-list__status {
+  white-space: nowrap;
+}
+
+.govuk-task-list__status .govuk-tag {
+  white-space: nowrap;
+  max-width: none;
+}
