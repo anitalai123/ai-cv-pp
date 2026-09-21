@@ -16,6 +16,7 @@ works — nothing depends on a server.
 
 | File | Mirrors | Notes |
 | --- | --- | --- |
+| `password.html` | — | Prototype password gate. The password is `star`. |
 | `index.html` | — | Prototype cover page. Links to the task list and has a "Reset all saved answers" button. Not a page from the live service. |
 | `task-list.html` | `/cv/create/task-list` | Three sections, statuses derived from saved answers. |
 | `profile-info.html` | `/cv/create/profile/info` | Guidance page, including the "If you are using AI to help you" details. |
@@ -51,6 +52,20 @@ Remaining task rows are dead links (`href="#"`), as are the header nav, footer
 links, sign in, Cymraeg, and the "preview how this section looks" link. Clicking
 one does nothing at all — `chrome.js` swallows the click so the page does not
 jump back to the top.
+
+## Password gate
+
+Every page loads `assets/auth.js` in the head, which sends you to
+`password.html` unless this browser session has been unlocked. The password is
+`star`, and entering it returns you to the page you originally asked for.
+
+This is a front-of-house gate for sharing the prototype, **not security**. The
+password is in the source in plain sight and the unlock flag is a
+`sessionStorage` value, so anyone who wants past it can get past it. Real access
+control for the deployed site is Vercel's Deployment Protection, which is set to
+All Deployments.
+
+To remove the gate, delete the `assets/auth.js` script tag from each page.
 
 ## How it is built
 
