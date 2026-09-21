@@ -10,6 +10,20 @@ body {
   flex-grow: 1;
 }
 
+/* Above 1020px GOV.UK centres .govuk-width-container with auto side margins.
+   Per the flexbox spec, a flex item with an auto cross-axis margin does not
+   stretch - it shrinks to fit its content - and this container is a direct
+   child of the flex column above. That collapsed short pages to a narrow
+   centred column. A definite width restores the full-width box, and the auto
+   margins then centre it as intended. Scoped to the breakpoint where those
+   margins turn auto, because below it width:100% would overflow the fixed
+   15px/30px margins. */
+@media (min-width: 1020px) {
+  body > .govuk-width-container {
+    width: 100%;
+  }
+}
+
 .workhub-language {
   padding: 10px 0;
   text-align: right;
