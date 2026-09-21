@@ -65,7 +65,7 @@ if (subjectsForm) {
   addRepeatable(container, subjectFields);
 
   document.getElementById('add-subject').addEventListener('click', function () {
-    addRepeatable(container, subjectFields);
+    addRepeatable(container, subjectFields, true);
   });
 
   subjectsForm.addEventListener('submit', function (event) {

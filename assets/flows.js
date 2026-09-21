@@ -64,12 +64,17 @@ function summaryCard(title, rows, index, kind) {
   '</div>';
 }
 
-/* Repeatable "Add another ..." inputs, numbered from 1. */
-function addRepeatable(container, build) {
+/* Repeatable "Add another ..." inputs, numbered from 1. Focus moves to the new
+   field only when someone asked for it, so fields rendered on page load do not
+   scroll the page down to the last one. */
+function addRepeatable(container, build, focus) {
   const index = container.children.length + 1;
   const wrapper = document.createElement('div');
   wrapper.innerHTML = build(index);
   container.appendChild(wrapper.firstElementChild);
-  const input = container.lastElementChild.querySelector('input, textarea');
-  if (input) input.focus();
+
+  if (focus) {
+    const input = container.lastElementChild.querySelector('input, textarea');
+    if (input) input.focus();
+  }
 }

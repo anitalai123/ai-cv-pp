@@ -68,16 +68,22 @@ if (responsibilitiesForm) {
     '</div>';
   }
 
-  function addField() {
-    addRepeatable(container, responsibilityField);
+  function addField(focus) {
+    addRepeatable(container, responsibilityField, focus);
     if (window.initCharacterCount) window.initCharacterCount(container.lastElementChild);
   }
 
   /* chrome.js is a module, so it runs after this script but before
      DOMContentLoaded - by which point initCharacterCount exists. */
-  document.addEventListener('DOMContentLoaded', addField);
+  document.addEventListener('DOMContentLoaded', function () {
+    addField();
+    addField();
+    addField();
+  });
 
-  document.getElementById('add-responsibility').addEventListener('click', addField);
+  document.getElementById('add-responsibility').addEventListener('click', function () {
+    addField(true);
+  });
 
   responsibilitiesForm.addEventListener('submit', function (event) {
     event.preventDefault();
