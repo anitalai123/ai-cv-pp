@@ -6,11 +6,19 @@ flow, as a baseline for designing AI feedback on the Personal profile.
 ## Running it
 
 ```
-python3 -m http.server 8123
+python3 serve.py
 ```
 
-Then open http://localhost:8123. Opening the HTML files directly in a browser also
+Then open http://localhost:8123. Pass a port to use a different one
+(`python3 serve.py 8080`). Opening the HTML files directly in a browser also
 works — nothing depends on a server.
+
+`serve.py` is the stock Python static server with caching turned off. Plain
+`python3 -m http.server` sends no `Cache-Control` header, so browsers fall back
+to heuristic caching and keep serving an edited `assets/*.js` or `styles.css`
+from disk — edits appear not to land until a hard reload. This sends
+`no-store`, so an ordinary reload always picks up the latest edit. Local
+development only: the deployed site is served by Vercel.
 
 ## Pages
 
