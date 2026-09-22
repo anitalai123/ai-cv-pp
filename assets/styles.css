@@ -49,3 +49,19 @@ body {
 [hidden]:not(.govuk-accordion__section-content) {
   display: none !important;
 }
+
+/* The inlined Bootstrap "stars" icon in the Personal profile task hint. Sized
+   in em so it tracks the hint text, and nudged down to sit on its baseline. */
+.workhub-ai-icon {
+  width: 1em;
+  height: 1em;
+  margin-right: 5px;
+  vertical-align: -0.125em;
+}
+
+/* "AI feedback available" is its own block rather than a <br> so the gap
+   between it and the hint above is controllable. */
+.workhub-ai-hint {
+  display: block;
+  margin-top: 3px;
+}
