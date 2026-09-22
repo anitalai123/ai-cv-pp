@@ -73,10 +73,8 @@ function renderHeader() {
     '<div class="govuk-width-container">' +
       '<div class="govuk-phase-banner">' +
         '<p class="govuk-phase-banner__content">' +
-          '<strong class="govuk-tag govuk-phase-banner__content__tag govuk-tag--yellow">Experimental</strong>' +
-          '<span class="govuk-phase-banner__text">This is an experimental service. ' +
-            '<a class="govuk-link" href="#">Give feedback (opens in new tab)</a>' +
-          '</span>' +
+          '<strong class="govuk-tag govuk-phase-banner__content__tag govuk-tag--red">Prototype</strong>' +
+          '<span class="govuk-phase-banner__text">This is a prototype</span>' +
         '</p>' +
       '</div>' +
       '<div class="workhub-language">English | <a class="govuk-link" href="#">Cymraeg</a></div>' +
