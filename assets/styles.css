@@ -102,6 +102,12 @@ body {
   white-space: nowrap;
 }
 
-.workhub-must-change-line {
+/* Sits directly under the H1 it belongs to, so the heading and its tag read as
+   one block rather than the tag drifting towards the feedback below. */
+.workhub-feedback-title {
   margin-bottom: 10px;
+}
+
+.workhub-must-change-line {
+  margin-bottom: 25px;
 }
