@@ -10,8 +10,9 @@ python3 serve.py
 ```
 
 Then open http://localhost:8123. Pass a port to use a different one
-(`python3 serve.py 8080`). Opening the HTML files directly in a browser also
-works — nothing depends on a server.
+(`python3 serve.py 8080`). Opening the HTML files directly in a browser works
+for everything except the AI feedback, which needs the server to reach
+`/api/feedback`.
 
 To get real AI feedback locally, install the SDK and give the server a key:
 
@@ -42,9 +43,9 @@ development only: the deployed site is served by Vercel.
 | --- | --- | --- |
 | `password.html` | — | Prototype password gate. The password is `star`. |
 | `index.html` | — | Prototype cover page. Prototype caveats, then an entry button and its own Reset button per option. Not a page from the live service. |
-| `task-list.html` | `/cv/create/task-list` | Three sections, statuses derived from saved answers. |
+| `task-list.html` | `/cv/create/task-list` | Three sections, statuses derived from saved answers. Four in option 2, which gives the profile its own. |
 | `profile-info.html` | `/cv/create/profile/info` | Guidance page, including the "If you are using AI to help you" details. |
-| `profile.html` | `/cv/create/profile` | Character-counted textarea. **This is where AI feedback goes** — see the `<!-- AI feedback will go here -->` marker. |
+| `profile.html` | `/cv/create/profile` | Character-counted textarea, and the way into the AI feedback: radios in option 1, a button in option 2. |
 | `work-history.html` | `/cv/create/work-history` | What can be included, and the two ways in. |
 | `work-history-info.html` | `/cv/create/work-history/info` | Guidance before adding a job. |
 | `work-history-job.html` | dynamic route | Job title, employer, dates, "are you at this job now". |
@@ -59,10 +60,10 @@ development only: the deployed site is served by Vercel.
 | `skills.html` | `/cv/create/skills` | Repeatable skill inputs, 128 characters each. |
 | `additional-info.html` | `/cv/create/additional-info` | Custom section title and details. |
 | `additional-info-review.html` | dynamic route | Summary cards for custom sections, with Change and Remove. |
-| `job-title.html` | — | Option 1 only. The job the feedback should be tailored to. |
-| `more-about-you.html` | — | Option 1 only. Lists the sections still Not started before showing feedback. |
-| `ai-feedback.html` | — | Option 1 only. Overall comment, then up to 5 pieces of feedback in an accordion. |
-| `feedback-edit.html` | — | Option 1 only. One piece of feedback beside the profile, editable. `?n=` picks which. |
+| `job-title.html` | — | The job the feedback should be tailored to. |
+| `more-about-you.html` | — | Lists the sections still Not started before showing feedback. |
+| `ai-feedback.html` | — | Overall comment, then up to 5 pieces of feedback in an accordion. |
+| `feedback-edit.html` | — | One piece of feedback beside the profile, editable. `?n=` picks which. |
 
 Flows, each ending on Done and returning to the task list with a success banner
 and the row marked Completed:
@@ -78,36 +79,41 @@ and the row marked Completed:
 - **Skills**: `skills.html` on its own
 - **Add custom section**: `additional-info.html` → `additional-info-review.html`
 
-On `profile.html`, option 2 shows two secondary buttons - Get AI feedback, into
-the same `job-title.html` as option 1, and a dead Preview section - where option
-1 shows the Yes/No radios and a Preview button.
+## The two options
 
-Option 2 gives the personal profile a section of its own on the task list -
-"3. Write Personal Profile", between the optional sections and Check and
-download, which becomes 4. `applyOptionTwoLayout` in `assets/task-list.js` moves
-the task; the task and its hint are otherwise unchanged.
+Both options run the same pages. `?option=` on the way in from the cover page
+sets `window.protoOption` (see `assets/store.js`), which is kept in
+`sessionStorage`, names the option in the phase banner, and keys the saved
+answers - so the two hold separate data and reset independently. The differences
+between them are a handful of conditionals, not a second set of pages:
 
-Option 1 adds an AI feedback branch off the personal profile. Answering Yes to
-"Would you like AI feedback?" goes to `job-title.html`; from there, any section
-still Not started sends you to `more-about-you.html` before `ai-feedback.html`.
-A section opened from that page returns to it when its Done button is pressed,
-rather than dropping you back on the task list.
+| | Option 1 | Option 2 |
+| --- | --- | --- |
+| Personal profile on the task list | last of the optional sections | its own section, "3. Write Personal Profile", pushing Check and download to 4 |
+| Way into the AI feedback | "Would you like AI feedback?" Yes/No radios | a Get AI feedback secondary button |
+| Preview | a secondary button under Done | a secondary button beside Get AI feedback |
 
-The feedback itself is placeholder text in `AI_FEEDBACK` in `assets/ai-flow.js`,
-pending the AI plumbing - the accordion and the edit pages are built from that
-list, so a real response drops straight in. `feedback-edit.html` walks the list
-with Next feedback, saving the profile each time so later pages show the edits
-made on earlier ones, and the accordion is set to `data-remember-expanded="false"`
-so Back to all feedback always lands with everything collapsed. The Back link at
-the top of an edit page returns to the previous page rather than to the list.
+`applyOptionTwoLayout` in `assets/task-list.js` moves the task; the task and its
+hint are otherwise unchanged.
+
+From either entry point the branch is the same: `job-title.html`, then, if any
+section is still Not started, `more-about-you.html` before `ai-feedback.html`. A
+section opened from that page returns to it when its Done button is pressed,
+rather than dropping you back on the task list. Asking for feedback on an empty
+profile shows an error instead - there would be nothing to give feedback on.
+
+`feedback-edit.html` walks the items with Next feedback, saving the profile each
+time so later pages show the edits made on earlier ones. The accordion is set to
+`data-remember-expanded="false"`, so Back to all feedback always lands with
+everything collapsed, and the Back link at the top of an edit page returns to the
+previous page rather than to the list.
 
 Jobs and gaps share one ordered list, so they interleave on the review page the
 way the live service shows them.
 
 Remaining task rows are dead links (`href="#"`), as are the header nav, footer
-links, sign in, Cymraeg, and the "preview how this section looks" link. Clicking
-one does nothing at all — `chrome.js` swallows the click so the page does not
-jump back to the top.
+links, sign in, Cymraeg, and Preview section. Clicking one does nothing at all —
+`chrome.js` swallows the click so the page does not jump back to the top.
 
 ## Password gate
 
@@ -162,10 +168,13 @@ saying so, so the flow can still be demonstrated.
 
 Plain HTML with [GOV.UK Frontend 6.5.1](https://github.com/alphagov/govuk-frontend)
 vendored in `vendor/govuk/` (CSS, JS, fonts, favicon) so it runs offline. No build
-step and no dependencies.
+step, and the only dependency is the `anthropic` SDK the serverless function
+needs - the pages themselves have none.
 
-- `assets/chrome.js` — Work Hub header, service navigation, Experimental phase
-  banner and footer, injected into every page so a change lands everywhere.
+- `assets/chrome.js` — Work Hub header, service navigation, prototype banner and
+  footer, injected into every page so a change lands everywhere. Also swallows
+  dead-link clicks and makes Back land at the top of the page rather than where
+  it was left.
 - `assets/store.js` — prototype state in `localStorage`, keyed per option so the
   two prototypes hold separate answers and reset independently; also resolves
   which option is in play (`window.protoOption`) and holds the one-shot success
@@ -184,6 +193,8 @@ step and no dependencies.
   that tells it how to give careers-adviser feedback.
 - `assets/styles.css` — the handful of Work Hub specific styles GOV.UK Frontend
   does not cover.
+- `serve.py` — the local server: static files with caching off, plus the one
+  `/api/feedback` route, which calls the same `api/feedback.py` Vercel runs.
 
 ## Copy
 
@@ -199,6 +210,7 @@ and may need correcting against the real thing:
 1. **Which rows sit in which section.** Required: Contact details, Work history.
    Optional: Personal profile, Education and training, Skills, Add custom section.
    Check and download: Name your CV, Check what you entered, Download your CV.
+   Option 2 deliberately departs from this by giving the profile its own section.
 2. **The 1,000 character limit** on the personal profile textarea — the real limit
    is set in a route chunk that only loads for a signed-in session.
 3. **The order of the two bullet lists** on `profile-info.html` relative to their
@@ -218,4 +230,6 @@ and may need correcting against the real thing:
    "error-character-limit-exceeded" key but not the number, so the details
    textarea reuses the personal profile's 1,000.
 
-Error states are deliberately not built — happy path only.
+Error states are deliberately not built — happy path only. The two exceptions
+are the password page and asking for AI feedback on an empty profile, both of
+which show a GOV.UK error summary and an inline message.
