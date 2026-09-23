@@ -125,12 +125,16 @@
 
     <script type="module" src="assets/chrome.js"></script>
     <script src="assets/store.js"></script>
+    <script src="assets/flows.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         /* chrome.js is a module, so window.protoOption is set by the time this runs. */
         const isOption2 = window.protoOption === '2';
         if (isOption2) {
           document.getElementById('profile-option-2-buttons').hidden = false;
+          /* Same stars icon as the feedback pages, so the button reads as the
+             way into the AI part of the service. */
+          document.getElementById('get-ai-feedback').innerHTML = AI_ICON + 'Get AI feedback';
           document.getElementById('preview-button-wrapper').hidden = true;
           document.getElementById('ai-feedback-group').hidden = true;
         }
