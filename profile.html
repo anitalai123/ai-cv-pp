@@ -94,38 +94,16 @@
                 </fieldset>
               </div>
 
-              <!-- Option 2 only: action links in place of option 1's radios, with
-                   the preview alongside them rather than as a button under Done. -->
-              <div id="profile-action-links" hidden>
-                <div class="gem-c-action-link">
-                  <span class="gem-c-action-link__icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true" viewBox="0 0 27 27" class="gem-c-action-link__svg">
-                      <circle class="gem-c-action-link__icon__circle" cx="13.5" cy="13.5" r="13.5"></circle>
-                      <g class="gem-c-action-link__icon__arrow">
-                        <path d="m17.701 13.526-3.827-3.828L14.973 8.6l4.926 4.926-4.926 4.926-1.099-1.099 3.827-3.827Z"></path>
-                        <path d="M8.363 12.749h9.762v1.554H8.363v-1.554Z"></path>
-                      </g>
-                    </svg>
-                  </span>
-                  <span class="gem-c-action-link__link-wrapper">
-                    <a class="govuk-link gem-c-action-link__link" href="job-title.html" id="get-ai-feedback">Get AI feedback</a>
-                  </span>
-                </div>
-
-                <div class="gem-c-action-link">
-                  <span class="gem-c-action-link__icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true" viewBox="0 0 27 27" class="gem-c-action-link__svg">
-                      <circle class="gem-c-action-link__icon__circle" cx="13.5" cy="13.5" r="13.5"></circle>
-                      <g class="gem-c-action-link__icon__arrow">
-                        <path d="m17.701 13.526-3.827-3.828L14.973 8.6l4.926 4.926-4.926 4.926-1.099-1.099 3.827-3.827Z"></path>
-                        <path d="M8.363 12.749h9.762v1.554H8.363v-1.554Z"></path>
-                      </g>
-                    </svg>
-                  </span>
-                  <span class="gem-c-action-link__link-wrapper">
-                    <a class="govuk-link gem-c-action-link__link" href="#">Preview section</a>
-                  </span>
-                </div>
+              <!-- Option 2 only: these replace option 1's radios, and carry the
+                   preview that option 1 puts under Done. -->
+              <div class="govuk-button-group" id="profile-option-2-buttons" hidden>
+                <a href="job-title.html" role="button" draggable="false" id="get-ai-feedback"
+                   class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                  Get AI feedback
+                </a>
+                <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                  Preview section
+                </button>
               </div>
 
               <button type="submit" class="govuk-button" data-module="govuk-button">Done</button>
@@ -152,7 +130,7 @@
         /* chrome.js is a module, so window.protoOption is set by the time this runs. */
         const isOption2 = window.protoOption === '2';
         if (isOption2) {
-          document.getElementById('profile-action-links').hidden = false;
+          document.getElementById('profile-option-2-buttons').hidden = false;
           document.getElementById('preview-button-wrapper').hidden = true;
           document.getElementById('ai-feedback-group').hidden = true;
         }
