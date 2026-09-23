@@ -78,6 +78,12 @@ and the row marked Completed:
 - **Skills**: `skills.html` on its own
 - **Add custom section**: `additional-info.html` → `additional-info-review.html`
 
+On `profile.html`, option 2 shows two action links - Get AI feedback, into the
+same `job-title.html` as option 1, and a dead Preview section - where option 1
+shows the Yes/No radios and a Preview button. The action link is a GOV.UK
+Publishing Component rather than a GOV.UK Frontend one, so its styles are
+reproduced in `assets/styles.css`.
+
 Option 2 gives the personal profile a section of its own on the task list -
 "3. Write Personal Profile", between the optional sections and Check and
 download, which becomes 4. `applyOptionTwoLayout` in `assets/task-list.js` moves
