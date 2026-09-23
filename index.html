@@ -29,7 +29,7 @@
               <li>Personal profile as the last section of optional section</li>
             </ul>
 
-            <a href="task-list.html?option=1" data-prototype-start role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+            <a href="task-list.html?option=1" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
               Go to prototype
             </a>
 
@@ -40,9 +40,18 @@
               <li>Action links as AI feedback branching</li>
             </ul>
 
-            <a href="task-list.html?option=2" data-prototype-start role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+            <a href="task-list.html?option=2" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
               Go to prototype
             </a>
+
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+            <h2 class="govuk-heading-m">Prototype controls</h2>
+            <p class="govuk-body">Clears everything saved in this browser and returns every section to Not started. Applies to both options.</p>
+
+            <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="reset-prototype">
+              Reset all saved answers
+            </button>
 
           </div>
         </div>
@@ -52,16 +61,17 @@
     <script type="module" src="assets/chrome.js"></script>
     <script src="assets/store.js"></script>
     <script>
-      /* Each run starts from scratch, so both options open on a task list with
-         every section Not started. */
-      document.querySelectorAll('a[data-prototype-start]').forEach(function (link) {
-        link.addEventListener('click', function () {
-          Store.clear();
-          /* Drop anything left over from a previous run too: a success banner
-             waiting to be shown, or a half-finished detour. */
-          Flash.take();
-          Return.take();
-        });
+      document.getElementById('reset-prototype').addEventListener('click', function () {
+        Store.clear();
+        /* Drop anything left over from the run too: a success banner waiting to
+           be shown, a half-finished detour, and the cached AI feedback. */
+        Flash.take();
+        Return.take();
+        try {
+          sessionStorage.removeItem('build-a-cv-feedback');
+        } catch (e) {}
+        this.textContent = 'Saved answers cleared';
+        this.disabled = true;
       });
     </script>
   </body>

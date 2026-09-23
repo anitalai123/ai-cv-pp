@@ -35,7 +35,7 @@ development only: the deployed site is served by Vercel.
 | File | Mirrors | Notes |
 | --- | --- | --- |
 | `password.html` | — | Prototype password gate. The password is `star`. |
-| `index.html` | — | Prototype cover page. Links to option 1 and option 2, clearing all saved answers on the way in so each run starts fresh. Not a page from the live service. |
+| `index.html` | — | Prototype cover page. A button into option 1 and into option 2, and one "Reset all saved answers" button covering both. Not a page from the live service. |
 | `task-list.html` | `/cv/create/task-list` | Three sections, statuses derived from saved answers. |
 | `profile-info.html` | `/cv/create/profile/info` | Guidance page, including the "If you are using AI to help you" details. |
 | `profile.html` | `/cv/create/profile` | Character-counted textarea. **This is where AI feedback goes** — see the `<!-- AI feedback will go here -->` marker. |
