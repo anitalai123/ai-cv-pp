@@ -61,7 +61,8 @@ SCHEMA = {
         },
         'items': {
             'type': 'array',
-            'maxItems': MAX_ITEMS,
+            # structured outputs rejects maxItems, so the cap lives in the
+            # prompt and is enforced again when the response comes back 
             'items': {
                 'type': 'object',
                 'properties': {
