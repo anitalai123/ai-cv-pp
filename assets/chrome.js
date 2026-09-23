@@ -32,30 +32,8 @@ window.addEventListener('pageshow', function () {
   window.scrollTo(0, 0);
 });
 
-/* Which design option the prototype is presenting. Both options currently share
-   the same pages, so the option arrives as ?option= on the way in from the cover
-   page and is kept in sessionStorage - that way every page of the flow labels
-   itself correctly without every internal link having to carry the parameter.
-   Exposed as window.protoOption so the classic flow scripts can branch on it. */
-const OPTION_KEY = 'build-a-cv-option';
-
-function currentOption() {
-  let value = null;
-  try {
-    const fromUrl = new URLSearchParams(window.location.search).get('option');
-    if (fromUrl) {
-      sessionStorage.setItem(OPTION_KEY, fromUrl);
-      value = fromUrl;
-    } else {
-      value = sessionStorage.getItem(OPTION_KEY);
-    }
-  } catch (e) {
-    /* private browsing - fall back to option 1 */
-  }
-  return value === '2' ? '2' : '1';
-}
-
-window.protoOption = currentOption();
+/* window.protoOption is set by store.js, a classic script, so it is already
+   there by the time this module runs. */
 
 const NAV_ITEMS = [
   { href: '#', label: 'AI work assistant' },
@@ -119,7 +97,7 @@ function renderHeader() {
           '<a class="workhub-banner-home" href="index.html">' +
             '<strong class="govuk-tag govuk-phase-banner__content__tag govuk-tag--red">Prototype' +
               '<span class="govuk-visually-hidden"> - go to prototype home</span></strong></a>' +
-          '<span class="govuk-phase-banner__text">This is a prototype - option ' + window.protoOption + '</span>' +
+          '<span class="govuk-phase-banner__text">This is a prototype - option ' + (window.protoOption || '1') + '</span>' +
         '</p>' +
       '</div>' +
       '<div class="workhub-language">English | <a class="govuk-link" href="#">Cymraeg</a></div>' +

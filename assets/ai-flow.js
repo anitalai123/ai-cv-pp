@@ -37,11 +37,13 @@ function afterJobTitle() {
    asking again - and so a reload does not spend another request. Store.clear on
    the cover page does not touch it; requestFeedback drops it whenever the
    profile or job title it was written about has changed. */
-const FEEDBACK_KEY = 'build-a-cv-feedback';
+function feedbackKey(option) {
+  return 'build-a-cv-feedback-' + (option || window.protoOption);
+}
 
 function cachedFeedback() {
   try {
-    return JSON.parse(sessionStorage.getItem(FEEDBACK_KEY));
+    return JSON.parse(sessionStorage.getItem(feedbackKey()));
   } catch (e) {
     return null;
   }
@@ -80,7 +82,7 @@ function requestFeedback() {
   }).then(function (feedback) {
     feedback.items = (feedback.items || []).slice(0, 5);
     try {
-      sessionStorage.setItem(FEEDBACK_KEY, JSON.stringify({ subject: subject, feedback: feedback }));
+      sessionStorage.setItem(feedbackKey(), JSON.stringify({ subject: subject, feedback: feedback }));
     } catch (e) {}
     return feedback;
   });

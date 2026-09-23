@@ -35,7 +35,7 @@ development only: the deployed site is served by Vercel.
 | File | Mirrors | Notes |
 | --- | --- | --- |
 | `password.html` | — | Prototype password gate. The password is `star`. |
-| `index.html` | — | Prototype cover page. A button into option 1 and into option 2, and one "Reset all saved answers" button covering both. Not a page from the live service. |
+| `index.html` | — | Prototype cover page. Prototype caveats, then an entry button and its own Reset button per option. Not a page from the live service. |
 | `task-list.html` | `/cv/create/task-list` | Three sections, statuses derived from saved answers. |
 | `profile-info.html` | `/cv/create/profile/info` | Guidance page, including the "If you are using AI to help you" details. |
 | `profile.html` | `/cv/create/profile` | Character-counted textarea. **This is where AI feedback goes** — see the `<!-- AI feedback will go here -->` marker. |
@@ -146,7 +146,9 @@ step and no dependencies.
 
 - `assets/chrome.js` — Work Hub header, service navigation, Experimental phase
   banner and footer, injected into every page so a change lands everywhere.
-- `assets/store.js` — prototype state in `localStorage`, plus the one-shot success
+- `assets/store.js` — prototype state in `localStorage`, keyed per option so the
+  two prototypes hold separate answers and reset independently; also resolves
+  which option is in play (`window.protoOption`) and holds the one-shot success
   banner message in `sessionStorage`.
 - `assets/task-list.js` — the task list rows and their status tags. Add or reorder
   tasks in `TASK_SECTIONS`.
