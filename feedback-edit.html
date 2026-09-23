@@ -120,10 +120,12 @@
         document.getElementById('feedback-back').addEventListener('click', save);
 
         /* Back goes wherever the person came from - the feedback list, or the
-           previous piece of feedback - rather than always to the list. The href
-           stays as a fallback for a page opened directly. */
+           previous piece of feedback - rather than always to the list. Tested on
+           the history itself rather than document.referrer, which browsers leave
+           empty often enough that the link fell through to its href instead.
+           That href stays as the fallback for a page opened cold in a new tab. */
         document.getElementById('feedback-back-link').addEventListener('click', function (event) {
-          if (!document.referrer) return;
+          if (window.history.length <= 1) return;
           event.preventDefault();
           save();
           window.history.back();
