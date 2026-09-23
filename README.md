@@ -16,12 +16,18 @@ works — nothing depends on a server.
 To get real AI feedback locally, install the SDK and give the server a key:
 
 ```
-pip3 install -r requirements.txt
+pip3 install --user -r requirements.txt
 echo 'ANTHROPIC_API_KEY=sk-ant-...' > .env
 ```
 
-`.env` is gitignored. Without a key the prototype still works - the feedback
-page shows example feedback and says so.
+`--user` installs into your home directory, so it needs no sudo. On macOS's
+system Python 3.9 this resolves to `anthropic` 0.125.x rather than 1.x, which
+needs Python 3.10 or newer; 0.125 supports everything `api/feedback.py` uses.
+Vercel's Python runtime is newer and installs 1.x.
+
+`.env` is gitignored, and `serve.py` reads it at startup - so restart the server
+after creating it. Without a key the prototype still works: the feedback page
+shows example feedback and says so.
 
 `serve.py` is the stock Python static server with caching turned off. Plain
 `python3 -m http.server` sends no `Cache-Control` header, so browsers fall back
