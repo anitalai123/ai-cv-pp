@@ -25,10 +25,17 @@
             <span class="govuk-caption-l">Personal profile</span>
             <h1 class="govuk-heading-l">AI feedback</h1>
 
-            <p class="govuk-body">Placeholder. This is where the AI feedback on the personal profile will go.</p>
+            <p class="govuk-body" id="feedback-summary"></p>
 
-            <a href="task-list.html" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-              Back to task list
+            <!-- rememberExpanded off, so coming back here always lands with
+                 every piece of feedback collapsed. -->
+            <div class="govuk-accordion" data-module="govuk-accordion" id="feedback-accordion"
+                 data-remember-expanded="false"></div>
+
+            <p class="govuk-body-s govuk-hint">Responses are AI-generated and may be inaccurate.</p>
+
+            <a href="feedback-edit.html?n=1" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+              Start editing
             </a>
 
           </div>
@@ -40,5 +47,31 @@
 
     <script type="module" src="assets/chrome.js"></script>
     <script src="assets/store.js"></script>
+    <script src="assets/flows.js"></script>
+    <script src="assets/ai-flow.js"></script>
+    <script>
+      document.getElementById('feedback-summary').textContent = AI_FEEDBACK_SUMMARY;
+
+      /* Built before GOV.UK Frontend initialises, so the accordion finds its
+         sections already in the page. */
+      document.getElementById('feedback-accordion').innerHTML = AI_FEEDBACK.map(function (item, i) {
+        const n = i + 1;
+        return '<div class="govuk-accordion__section">' +
+          '<div class="govuk-accordion__section-header">' +
+            '<h2 class="govuk-accordion__section-heading">' +
+              '<span class="govuk-accordion__section-button" id="feedback-heading-' + n + '">' +
+                escapeHtml(item.title) + '</span>' +
+            '</h2>' +
+          '</div>' +
+          '<div id="feedback-content-' + n + '" class="govuk-accordion__section-content">' +
+            '<p class="govuk-body">' + escapeHtml(item.details) + '</p>' +
+            '<p class="govuk-body">' +
+              '<a class="govuk-link" href="feedback-edit.html?n=' + n + '">Start editing' +
+                '<span class="govuk-visually-hidden"> ' + escapeHtml(item.title) + '</span></a>' +
+            '</p>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    </script>
   </body>
 </html>

@@ -45,7 +45,8 @@ development only: the deployed site is served by Vercel.
 | `additional-info-review.html` | dynamic route | Summary cards for custom sections, with Change and Remove. |
 | `job-title.html` | — | Option 1 only. The job the feedback should be tailored to. |
 | `more-about-you.html` | — | Option 1 only. Lists the sections still Not started before showing feedback. |
-| `ai-feedback.html` | — | Option 1 only. Placeholder for the feedback itself. |
+| `ai-feedback.html` | — | Option 1 only. Overall comment, then up to 5 pieces of feedback in an accordion. |
+| `feedback-edit.html` | — | Option 1 only. One piece of feedback beside the profile, editable. `?n=` picks which. |
 
 Flows, each ending on Done and returning to the task list with a success banner
 and the row marked Completed:
@@ -66,6 +67,14 @@ Option 1 adds an AI feedback branch off the personal profile. Answering Yes to
 still Not started sends you to `more-about-you.html` before `ai-feedback.html`.
 A section opened from that page returns to it when its Done button is pressed,
 rather than dropping you back on the task list.
+
+The feedback itself is placeholder text in `AI_FEEDBACK` in `assets/ai-flow.js`,
+pending the AI plumbing - the accordion and the edit pages are built from that
+list, so a real response drops straight in. `feedback-edit.html` walks the list
+with Next feedback, saving the profile each time so later pages show the edits
+made on earlier ones, and the accordion is set to `data-remember-expanded="false"`
+so Back to all feedback always lands with everything collapsed. The Back link at
+the top of an edit page returns to the previous page rather than to the list.
 
 Jobs and gaps share one ordered list, so they interleave on the review page the
 way the live service shows them.

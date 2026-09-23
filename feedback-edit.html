@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+  <head>
+    <meta charset="utf-8">
+    <title>AI feedback - Work Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
+    <link rel="icon" sizes="48x48" href="vendor/govuk/assets/images/favicon.ico">
+    <link rel="stylesheet" href="vendor/govuk/govuk-frontend.min.css">
+    <link rel="stylesheet" href="assets/styles.css">
+    <script src="assets/auth.js"></script>
+  </head>
+  <body class="govuk-template__body">
+    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+
+    <header data-workhub-header></header>
+
+    <div class="govuk-width-container">
+      <a href="ai-feedback.html" class="govuk-back-link" id="feedback-back-link">Back</a>
+
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-l">AI feedback</span>
+            <h1 class="govuk-heading-l" id="feedback-title"></h1>
+
+            <h2 class="govuk-heading-s workhub-feedback-label" id="feedback-label"></h2>
+            <div class="govuk-inset-text workhub-inset-text--feedback" id="feedback-details"></div>
+
+            <form id="feedback-form" novalidate>
+              <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="1000">
+                <div class="govuk-form-group">
+                  <label class="govuk-label govuk-label--s" for="personal-profile">
+                    Your personal profile
+                  </label>
+                  <textarea class="govuk-textarea govuk-js-character-count" id="personal-profile"
+                            name="personalProfile" rows="10"
+                            aria-describedby="personal-profile-info"></textarea>
+                </div>
+                <div id="personal-profile-info" class="govuk-hint govuk-character-count__message">
+                  You have 1,000 characters remaining
+                </div>
+              </div>
+
+              <div class="govuk-button-group">
+                <button type="submit" class="govuk-button" data-module="govuk-button" id="feedback-next">
+                  Next feedback
+                </button>
+                <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="feedback-done">
+                  Done
+                </button>
+              </div>
+            </form>
+
+            <p class="govuk-body">
+              <a class="govuk-link" href="ai-feedback.html" id="feedback-back">Back to all feedback</a>
+            </p>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer" data-workhub-footer></footer>
+
+    <script type="module" src="assets/chrome.js"></script>
+    <script src="assets/store.js"></script>
+    <script src="assets/flows.js"></script>
+    <script src="assets/ai-flow.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const n = feedbackIndex();
+        const item = AI_FEEDBACK[n - 1];
+        const isLast = n === AI_FEEDBACK.length;
+
+        document.getElementById('feedback-title').textContent = item.title;
+        document.getElementById('feedback-details').textContent = item.details;
+        document.getElementById('feedback-label').innerHTML = AI_ICON + 'AI feedback';
+
+        /* Whatever was written last, including edits made on the feedback page
+           before this one. */
+        const textarea = document.getElementById('personal-profile');
+        textarea.value = Store.read().profile || '';
+        // GOV.UK Frontend has already counted an empty textarea by this point.
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+
+        function save() {
+          Store.write({ profile: textarea.value.trim() });
+        }
+
+        function finish() {
+          save();
+          Flash.set('Personal Profile updated');
+          window.location.href = 'task-list.html';
+        }
+
+        const next = document.getElementById('feedback-next');
+        const done = document.getElementById('feedback-done');
+
+        /* The last piece of feedback has nowhere to go next, so Done is the
+           primary action there instead of a second button. */
+        if (isLast) {
+          done.hidden = true;
+          next.textContent = 'Done';
+        }
+
+        document.getElementById('feedback-form').addEventListener('submit', function (event) {
+          event.preventDefault();
+          if (isLast) {
+            finish();
+            return;
+          }
+          save();
+          window.location.href = 'feedback-edit.html?n=' + (n + 1);
+        });
+
+        done.addEventListener('click', finish);
+
+        document.getElementById('feedback-back').addEventListener('click', save);
+
+        /* Back goes wherever the person came from - the feedback list, or the
+           previous piece of feedback - rather than always to the list. The href
+           stays as a fallback for a page opened directly. */
+        document.getElementById('feedback-back-link').addEventListener('click', function (event) {
+          if (!document.referrer) return;
+          event.preventDefault();
+          save();
+          window.history.back();
+        });
+      });
+    </script>
+  </body>
+</html>

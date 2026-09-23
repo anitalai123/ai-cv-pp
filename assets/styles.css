@@ -81,3 +81,16 @@ body {
   box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
   background-color: #fd0;
 }
+
+/* AI feedback shown on an edit page. A GOV.UK inset text recoloured orange to
+   separate the machine's comment from the person's own writing. */
+.workhub-inset-text--feedback {
+  border-left-color: #f47738;
+  background-color: #fef8f5;
+  padding-right: 15px;
+}
+
+/* The "AI feedback" label sitting directly on top of the orange inset. */
+.workhub-feedback-label {
+  margin-bottom: 5px;
+}
