@@ -22,6 +22,17 @@
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-two-thirds">
 
+            <div class="govuk-error-summary" id="profile-error-summary" tabindex="-1" hidden>
+              <div role="alert">
+                <h2 class="govuk-error-summary__title">There is a problem</h2>
+                <div class="govuk-error-summary__body">
+                  <ul class="govuk-list govuk-error-summary__list">
+                    <li><a href="#personal-profile">Your personal profile is empty for us to give feedback</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
             <form id="profile-form" novalidate>
               <span class="govuk-caption-l">Personal profile</span>
               <h1 class="govuk-heading-l">Write a personal profile</h1>
@@ -33,17 +44,26 @@
                 <li>show how your specific skills match the job description</li>
               </ul>
 
-              <p class="govuk-body">For example:</p>
-              <p class="govuk-body">An experienced bookkeeper and administrator. Enthusiastic team player, with a flexible attitude and project management experience. During career break took the opportunity to further develop computer skills and now seeking to resume full-time employment within an accounts environment.</p>
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">See an example</span>
+                </summary>
+                <div class="govuk-details__text">
+                  An experienced bookkeeper and administrator. Enthusiastic team player, with a flexible attitude and project management experience. During career break took the opportunity to further develop computer skills and now seeking to resume full-time employment within an accounts environment.
+                </div>
+              </details>
 
               <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="1000">
-                <div class="govuk-form-group">
+                <div class="govuk-form-group" id="personal-profile-group">
                   <label class="govuk-label govuk-label--s" for="personal-profile">
                     Write your personal profile
                   </label>
+                  <p class="govuk-error-message" id="personal-profile-error" hidden>
+                    <span class="govuk-visually-hidden">Error:</span> Your personal profile is empty for us to give feedback
+                  </p>
                   <textarea class="govuk-textarea govuk-js-character-count" id="personal-profile"
                             name="personalProfile" rows="8"
-                            aria-describedby="personal-profile-info"></textarea>
+                            aria-describedby="personal-profile-error personal-profile-info"></textarea>
                 </div>
                 <div id="personal-profile-info" class="govuk-hint govuk-character-count__message">
                   You have 1,000 characters remaining
@@ -52,11 +72,41 @@
 
               <!-- AI feedback will go here -->
 
-              <div class="govuk-inset-text">
+              <!-- Option 1 only: the AI feedback branch starts here. -->
+              <div class="govuk-form-group" id="ai-feedback-group">
+                <fieldset class="govuk-fieldset" aria-describedby="ai-feedback-hint">
+                  <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                    Would you like AI feedback?
+                  </legend>
+                  <div id="ai-feedback-hint" class="govuk-hint">
+                    Get feedback based on your information and the job you're going for
+                  </div>
+                  <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
+                    <div class="govuk-radios__item">
+                      <input class="govuk-radios__input" id="ai-feedback-yes" name="aiFeedback" type="radio" value="yes">
+                      <label class="govuk-label govuk-radios__label" for="ai-feedback-yes">Yes</label>
+                    </div>
+                    <div class="govuk-radios__item">
+                      <input class="govuk-radios__input" id="ai-feedback-no" name="aiFeedback" type="radio" value="no">
+                      <label class="govuk-label govuk-radios__label" for="ai-feedback-no">No</label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+
+              <!-- Option 1 offers the preview as a secondary button under Done; option 2
+                   keeps the inset text. The script below shows whichever one applies. -->
+              <div class="govuk-inset-text" id="preview-inset" hidden>
                 You can <a class="govuk-link" href="#">preview</a> how this section looks.
               </div>
 
               <button type="submit" class="govuk-button" data-module="govuk-button">Done</button>
+
+              <div id="preview-button-wrapper">
+                <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                  Preview section
+                </button>
+              </div>
             </form>
 
           </div>
@@ -70,15 +120,68 @@
     <script src="assets/store.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
+        /* chrome.js is a module, so window.protoOption is set by the time this runs. */
+        const isOption2 = window.protoOption === '2';
+        if (isOption2) {
+          document.getElementById('preview-inset').hidden = false;
+          document.getElementById('preview-button-wrapper').hidden = true;
+          document.getElementById('ai-feedback-group').hidden = true;
+        }
+
         const textarea = document.getElementById('personal-profile');
         textarea.value = Store.read().profile || '';
         // GOV.UK Frontend has already counted an empty textarea by this point.
         textarea.dispatchEvent(new Event('input', { bubbles: true }));
 
+        const errorSummary = document.getElementById('profile-error-summary');
+        const errorMessage = document.getElementById('personal-profile-error');
+        const formGroup = document.getElementById('personal-profile-group');
+
+        function showEmptyProfileError() {
+          /* Clear the answer so the choice has to be made again once there is
+             something to give feedback on. */
+          document.querySelectorAll('input[name="aiFeedback"]').forEach(function (radio) {
+            radio.checked = false;
+          });
+          errorSummary.hidden = false;
+          errorMessage.hidden = false;
+          formGroup.classList.add('govuk-form-group--error');
+          textarea.classList.add('govuk-textarea--error');
+          errorSummary.focus();
+        }
+
+        function clearEmptyProfileError() {
+          errorSummary.hidden = true;
+          errorMessage.hidden = true;
+          formGroup.classList.remove('govuk-form-group--error');
+          textarea.classList.remove('govuk-textarea--error');
+        }
+
         document.getElementById('profile-form').addEventListener('submit', function (event) {
           event.preventDefault();
-          Store.write({ profile: textarea.value.trim() });
-          Flash.set('Personal Profile updated');
+          clearEmptyProfileError();
+
+          const profile = textarea.value.trim();
+          const choice = document.querySelector('input[name="aiFeedback"]:checked');
+          const wantsFeedback = !isOption2 && choice && choice.value === 'yes';
+
+          /* Feedback needs something to work with, so an empty profile is the one
+             case that stops here rather than saving and moving on. */
+          if (wantsFeedback && !profile) {
+            showEmptyProfileError();
+            return;
+          }
+
+          Store.write({ profile: profile });
+
+          if (wantsFeedback) {
+            window.location.href = 'job-title.html';
+            return;
+          }
+
+          /* An empty profile leaves the task Not started, so there is nothing to
+             announce on the task list. */
+          if (profile) Flash.set('Personal Profile updated');
           window.location.href = 'task-list.html';
         });
       });

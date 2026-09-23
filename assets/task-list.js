@@ -33,13 +33,13 @@ const TASK_SECTIONS = {
       id: 'skills',
       name: 'Skills',
       hint: 'Skills relevant to the job you are applying for',
-      href: '#',
+      href: 'skills.html',
     },
     {
       id: 'additionalInfo',
       name: 'Add custom section',
       hint: 'For example, achievements, awards, interests, or licences',
-      href: '#',
+      href: 'additional-info.html',
     },
     {
       id: 'profile',
@@ -117,6 +117,10 @@ function renderTask(task, state) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  /* Reaching the task list ends any detour from "We need more about you", so a
+     section finished later on does not bounce back there. */
+  Return.take();
+
   const state = Store.read();
 
   Object.keys(TASK_SECTIONS).forEach(function (listId) {

@@ -25,7 +25,7 @@ development only: the deployed site is served by Vercel.
 | File | Mirrors | Notes |
 | --- | --- | --- |
 | `password.html` | — | Prototype password gate. The password is `star`. |
-| `index.html` | — | Prototype cover page. Links to the task list and has a "Reset all saved answers" button. Not a page from the live service. |
+| `index.html` | — | Prototype cover page. Links to option 1 and option 2, clearing all saved answers on the way in so each run starts fresh. Not a page from the live service. |
 | `task-list.html` | `/cv/create/task-list` | Three sections, statuses derived from saved answers. |
 | `profile-info.html` | `/cv/create/profile/info` | Guidance page, including the "If you are using AI to help you" details. |
 | `profile.html` | `/cv/create/profile` | Character-counted textarea. **This is where AI feedback goes** — see the `<!-- AI feedback will go here -->` marker. |
@@ -40,6 +40,12 @@ development only: the deployed site is served by Vercel.
 | `education-type.html` | `/cv/create/education/type` | Qualification type and institution. |
 | `education-subjects.html` | dynamic route | Repeatable subject and grade pairs. |
 | `education-review.html` | `/cv/create/education/review` | Summary cards, with Change and Remove. |
+| `skills.html` | `/cv/create/skills` | Repeatable skill inputs, 128 characters each. |
+| `additional-info.html` | `/cv/create/additional-info` | Custom section title and details. |
+| `additional-info-review.html` | dynamic route | Summary cards for custom sections, with Change and Remove. |
+| `job-title.html` | — | Option 1 only. The job the feedback should be tailored to. |
+| `more-about-you.html` | — | Option 1 only. Lists the sections still Not started before showing feedback. |
+| `ai-feedback.html` | — | Option 1 only. Placeholder for the feedback itself. |
 
 Flows, each ending on Done and returning to the task list with a success banner
 and the row marked Completed:
@@ -52,6 +58,14 @@ and the row marked Completed:
   review page.
 - **Education and training**: `education-info.html` → `education-type.html` →
   `education-subjects.html` → `education-review.html`
+- **Skills**: `skills.html` on its own
+- **Add custom section**: `additional-info.html` → `additional-info-review.html`
+
+Option 1 adds an AI feedback branch off the personal profile. Answering Yes to
+"Would you like AI feedback?" goes to `job-title.html`; from there, any section
+still Not started sends you to `more-about-you.html` before `ai-feedback.html`.
+A section opened from that page returns to it when its Done button is pressed,
+rather than dropping you back on the task list.
 
 Jobs and gaps share one ordered list, so they interleave on the review page the
 way the live service shows them.
@@ -93,6 +107,9 @@ step and no dependencies.
   and the repeatable "Add another ..." inputs.
 - `assets/work-history.js` and `assets/education.js` — the two flows' form
   handling and review pages.
+- `assets/sections.js` — skills and the custom "Add a section" flow.
+- `assets/ai-flow.js` — the option 1 AI feedback branch: which sections count as
+  outstanding, and where the job title page goes next.
 - `assets/styles.css` — the handful of Work Hub specific styles GOV.UK Frontend
   does not cover.
 
@@ -121,5 +138,12 @@ and may need correcting against the real thing:
    could not be probed, so their filenames are my own.
 5. **"Type of qualification"** is spelled with a double space in the live
    translation bundle. Treated as a typo and rendered with one.
+6. **The order of the skills page content.** The copy is verbatim from the live
+   translation bundle (`CvBuilderSkills`), but the bundle does not say whether
+   "You can explain how you've used these skills..." sits above or below the
+   bulleted list. It is rendered below.
+7. **The custom section character limit.** `CvBuilderAdditionalInfoPage` has an
+   "error-character-limit-exceeded" key but not the number, so the details
+   textarea reuses the personal profile's 1,000.
 
 Error states are deliberately not built — happy path only.

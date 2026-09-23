@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+  <head>
+    <meta charset="utf-8">
+    <title>Sections you've added - Work Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
+    <link rel="icon" sizes="48x48" href="vendor/govuk/assets/images/favicon.ico">
+    <link rel="stylesheet" href="vendor/govuk/govuk-frontend.min.css">
+    <link rel="stylesheet" href="assets/styles.css">
+    <script src="assets/auth.js"></script>
+  </head>
+  <body class="govuk-template__body">
+    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+
+    <header data-workhub-header></header>
+
+    <div class="govuk-width-container">
+      <a href="additional-info.html" class="govuk-back-link">Back</a>
+
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-l">Add a section</span>
+            <h1 class="govuk-heading-l">Sections you&rsquo;ve added</h1>
+
+            <div id="additional-info-summary"></div>
+
+            <div class="govuk-button-group">
+              <button type="button" class="govuk-button" data-module="govuk-button" id="additional-info-done">Done</button>
+              <a href="additional-info.html" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">Add another section</a>
+            </div>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer" data-workhub-footer></footer>
+
+    <script type="module" src="assets/chrome.js"></script>
+    <script src="assets/store.js"></script>
+    <script src="assets/flows.js"></script>
+    <script src="assets/sections.js"></script>
+  </body>
+</html>

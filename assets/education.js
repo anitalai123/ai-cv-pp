@@ -148,6 +148,13 @@ if (educationSummary) {
   });
 
   document.getElementById('education-done').addEventListener('click', function () {
+    /* Opened from "We need more about you"? Go back there instead of the
+       task list, and skip the banner - it belongs to the task list. */
+    const returnTo = Return.take();
+    if (returnTo) {
+      window.location.href = returnTo;
+      return;
+    }
     Flash.set('Education and training updated');
     window.location.href = 'task-list.html';
   });

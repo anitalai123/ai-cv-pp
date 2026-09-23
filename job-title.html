@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+  <head>
+    <meta charset="utf-8">
+    <title>Job you're going for - Work Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
+    <link rel="icon" sizes="48x48" href="vendor/govuk/assets/images/favicon.ico">
+    <link rel="stylesheet" href="vendor/govuk/govuk-frontend.min.css">
+    <link rel="stylesheet" href="assets/styles.css">
+    <script src="assets/auth.js"></script>
+  </head>
+  <body class="govuk-template__body">
+    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+
+    <header data-workhub-header></header>
+
+    <div class="govuk-width-container">
+      <a href="profile.html" class="govuk-back-link">Back</a>
+
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+
+            <form id="job-title-form" novalidate>
+              <span class="govuk-caption-l">Personal profile</span>
+              <h1 class="govuk-heading-l">Job you're going for</h1>
+
+              <p class="govuk-body">Tell us what job you're applying for to get tailored AI feedback.</p>
+
+              <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s" for="job-title">Job title</label>
+                <input class="govuk-input" id="job-title" name="jobTitle" type="text">
+              </div>
+
+              <button type="submit" class="govuk-button" data-module="govuk-button">Next</button>
+            </form>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer" data-workhub-footer></footer>
+
+    <script type="module" src="assets/chrome.js"></script>
+    <script src="assets/store.js"></script>
+    <script src="assets/ai-flow.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('job-title');
+        input.value = Store.read().jobTitle || '';
+
+        document.getElementById('job-title-form').addEventListener('submit', function (event) {
+          event.preventDefault();
+          Store.write({ jobTitle: input.value.trim() });
+          /* Straight to the feedback when nothing is outstanding, otherwise the
+             nudge page lists what is still missing. */
+          window.location.href = afterJobTitle();
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -65,3 +65,19 @@ body {
   display: block;
   margin-top: 3px;
 }
+
+/* The red Prototype tag is the way back to the cover page. It carries no link
+   underline so it still reads as a tag, and keeps the GOV.UK focus state. */
+.workhub-banner-home {
+  text-decoration: none;
+}
+
+.workhub-banner-home:hover .govuk-tag {
+  opacity: 0.85;
+}
+
+.workhub-banner-home:focus {
+  outline: 3px solid transparent;
+  box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+  background-color: #fd0;
+}

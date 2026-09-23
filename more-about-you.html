@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+  <head>
+    <meta charset="utf-8">
+    <title>We need more about you - Work Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0c0c">
+    <link rel="icon" sizes="48x48" href="vendor/govuk/assets/images/favicon.ico">
+    <link rel="stylesheet" href="vendor/govuk/govuk-frontend.min.css">
+    <link rel="stylesheet" href="assets/styles.css">
+    <script src="assets/auth.js"></script>
+  </head>
+  <body class="govuk-template__body">
+    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+
+    <header data-workhub-header></header>
+
+    <div class="govuk-width-container">
+      <a href="job-title.html" class="govuk-back-link">Back</a>
+
+      <main class="govuk-main-wrapper" id="main-content">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-l">Personal profile</span>
+            <h1 class="govuk-heading-l">We need more about you</h1>
+
+            <p class="govuk-body">AI feedback works best when there is more information about you, we'd encourage you to fill in these sections.</p>
+
+            <ul class="govuk-task-list" id="outstanding-sections"></ul>
+
+            <a href="ai-feedback.html" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+              Skip and show AI feedback
+            </a>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="govuk-footer" data-workhub-footer></footer>
+
+    <script type="module" src="assets/chrome.js"></script>
+    <script src="assets/store.js"></script>
+    <script src="assets/ai-flow.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const sections = outstandingSections();
+
+        /* Everything is filled in - there is nothing to nudge about, so go
+           straight on. This is what a section's Done button returns into. */
+        if (!sections.length) {
+          window.location.href = 'ai-feedback.html';
+          return;
+        }
+
+        document.getElementById('outstanding-sections').innerHTML = sections.map(function (section) {
+          const statusId = section.id + '-status';
+          return '<li class="govuk-task-list__item govuk-task-list__item--with-link">' +
+            '<div class="govuk-task-list__name-and-hint">' +
+              '<a class="govuk-link govuk-task-list__link" href="' + section.href + '" ' +
+                 'aria-describedby="' + statusId + '">' + section.name + '</a>' +
+            '</div>' +
+            '<div class="govuk-task-list__status" id="' + statusId + '">' +
+              '<strong class="govuk-tag">Not started</strong></div>' +
+          '</li>';
+        }).join('');
+
+        /* A section opened from here comes back here when it is done, rather
+           than dropping the person on the task list. */
+        document.getElementById('outstanding-sections').addEventListener('click', function (event) {
+          const link = event.target.closest('a.govuk-task-list__link');
+          if (link && link.getAttribute('href') !== '#') Return.set('more-about-you.html');
+        });
+      });
+    </script>
+  </body>
+</html>
