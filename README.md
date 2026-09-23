@@ -13,6 +13,16 @@ Then open http://localhost:8123. Pass a port to use a different one
 (`python3 serve.py 8080`). Opening the HTML files directly in a browser also
 works — nothing depends on a server.
 
+To get real AI feedback locally, install the SDK and give the server a key:
+
+```
+pip3 install -r requirements.txt
+echo 'ANTHROPIC_API_KEY=sk-ant-...' > .env
+```
+
+`.env` is gitignored. Without a key the prototype still works - the feedback
+page shows example feedback and says so.
+
 `serve.py` is the stock Python static server with caching turned off. Plain
 `python3 -m http.server` sends no `Cache-Control` header, so browsers fall back
 to heuristic caching and keep serving an edited `assets/*.js` or `styles.css`
@@ -100,6 +110,34 @@ All Deployments.
 
 To remove the gate, delete the `assets/auth.js` script tag from each page.
 
+## AI feedback
+
+`api/feedback.py` asks Claude for feedback on the personal profile. It is a
+Vercel Python serverless function at `/api/feedback`, and `serve.py` imports the
+same module locally, so there is one implementation.
+
+**The API key stays on the server.** It is read from `ANTHROPIC_API_KEY` and is
+never sent to the browser - the page posts the CV answers and gets finished
+feedback back. On Vercel, set `ANTHROPIC_API_KEY` in Project Settings ->
+Environment Variables; locally, put it in `.env`.
+
+The request sends everything the person has entered - profile, the job they are
+going for, work history and gaps, education, skills and any custom sections - so
+the feedback can suggest things they could say about themselves rather than
+inventing experience. The response is constrained by a JSON schema
+(`output_config.format`), so the page never has to parse prose: it gets a
+summary and up to 5 items, each with a title, the detail, and whether it is a
+must change.
+
+Feedback is cached in `sessionStorage` against the profile and job title it was
+written about, so the edit pages show the same items the accordion did and a
+reload does not spend another request. Change either, and the next visit asks
+again.
+
+If the API cannot be reached - no key, no SDK installed, offline - the page
+falls back to the example feedback in `PLACEHOLDER_FEEDBACK` and shows a warning
+saying so, so the flow can still be demonstrated.
+
 ## How it is built
 
 Plain HTML with [GOV.UK Frontend 6.5.1](https://github.com/alphagov/govuk-frontend)
@@ -118,7 +156,10 @@ step and no dependencies.
   handling and review pages.
 - `assets/sections.js` — skills and the custom "Add a section" flow.
 - `assets/ai-flow.js` — the option 1 AI feedback branch: which sections count as
-  outstanding, and where the job title page goes next.
+  outstanding, where the job title page goes next, and the call to
+  `/api/feedback` with its cache and fallback.
+- `api/feedback.py` — the serverless function that asks Claude, and the prompt
+  that tells it how to give careers-adviser feedback.
 - `assets/styles.css` — the handful of Work Hub specific styles GOV.UK Frontend
   does not cover.
 

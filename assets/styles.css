@@ -94,3 +94,14 @@ body {
 .workhub-feedback-label {
   margin-bottom: 5px;
 }
+
+/* "Must change" on a piece of feedback. GOV.UK Frontend 6 folded blue into the
+   default tag and dropped the --blue modifier, so an unmodified govuk-tag is
+   already the blue one - this only handles placement. */
+.workhub-must-change {
+  white-space: nowrap;
+}
+
+.workhub-must-change-line {
+  margin-bottom: 10px;
+}

@@ -32,14 +32,67 @@ function afterJobTitle() {
 
 /* ------------------------------------------------------------- feedback */
 
-/* Placeholder feedback, pending the AI plumbing. Five is the most the page
-   shows; the accordion and the edit pages are driven entirely by this list, so
-   swapping in a real response means replacing these objects. */
-const AI_FEEDBACK_SUMMARY = 'Your profile gives a clear sense of your experience, ' +
+/* Feedback comes from /api/feedback, which asks Claude. The response is kept in
+   sessionStorage so the edit pages show the same items the accordion did without
+   asking again - and so a reload does not spend another request. Store.clear on
+   the cover page does not touch it; requestFeedback drops it whenever the
+   profile or job title it was written about has changed. */
+const FEEDBACK_KEY = 'build-a-cv-feedback';
+
+function cachedFeedback() {
+  try {
+    return JSON.parse(sessionStorage.getItem(FEEDBACK_KEY));
+  } catch (e) {
+    return null;
+  }
+}
+
+/* What the feedback was written about. Different answers, different feedback. */
+function feedbackSubject(state) {
+  return JSON.stringify([state.profile || '', state.jobTitle || '']);
+}
+
+function requestFeedback() {
+  const state = Store.read();
+  const subject = feedbackSubject(state);
+  const cached = cachedFeedback();
+
+  if (cached && cached.subject === subject) {
+    return Promise.resolve(cached.feedback);
+  }
+
+  return fetch('/api/feedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      profile: state.profile || '',
+      jobTitle: state.jobTitle || '',
+      workHistory: state.workHistory || [],
+      education: state.education || [],
+      skills: state.skills || [],
+      additionalInfo: state.additionalInfo || [],
+    }),
+  }).then(function (response) {
+    return response.json().then(function (body) {
+      if (!response.ok) throw new Error(body.error || 'Feedback failed');
+      return body;
+    });
+  }).then(function (feedback) {
+    feedback.items = (feedback.items || []).slice(0, 5);
+    try {
+      sessionStorage.setItem(FEEDBACK_KEY, JSON.stringify({ subject: subject, feedback: feedback }));
+    } catch (e) {}
+    return feedback;
+  });
+}
+
+/* Shown when the API is not reachable - no key set, or offline - so the pages
+   can still be walked through in a demo. */
+const PLACEHOLDER_SUMMARY = 'Your profile gives a clear sense of your experience, ' +
   'but it is doing less than it could to connect that experience to the job you are ' +
   'going for. The points below would make it stronger.';
 
-const AI_FEEDBACK = [
+const PLACEHOLDER_ITEMS = [
   {
     title: 'Name the job you are going for',
     details: 'Your profile does not say what kind of role you want. Employers read this ' +
@@ -67,11 +120,13 @@ const AI_FEEDBACK = [
   },
 ];
 
+const PLACEHOLDER_FEEDBACK = { summary: PLACEHOLDER_SUMMARY, items: PLACEHOLDER_ITEMS };
+
 /* 1-based, from ?n= on the edit page, clamped to the feedback that exists. */
-function feedbackIndex() {
+function feedbackIndex(total) {
   let n = 1;
   try {
     n = parseInt(new URLSearchParams(window.location.search).get('n'), 10) || 1;
   } catch (e) {}
-  return Math.min(Math.max(n, 1), AI_FEEDBACK.length);
+  return Math.min(Math.max(n, 1), total);
 }

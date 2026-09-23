@@ -26,6 +26,9 @@
             <h1 class="govuk-heading-l" id="feedback-title"></h1>
 
             <h2 class="govuk-heading-s workhub-feedback-label" id="feedback-label"></h2>
+            <p class="govuk-body workhub-must-change-line" id="feedback-must-change" hidden>
+              <strong class="govuk-tag workhub-must-change">Must change</strong>
+            </p>
             <div class="govuk-inset-text workhub-inset-text--feedback" id="feedback-details"></div>
 
             <form id="feedback-form" novalidate>
@@ -70,13 +73,19 @@
     <script src="assets/ai-flow.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        const n = feedbackIndex();
-        const item = AI_FEEDBACK[n - 1];
-        const isLast = n === AI_FEEDBACK.length;
+        /* Already fetched on the feedback page, so this reads the cached
+           response rather than asking again. */
+        const feedback = (cachedFeedback() || {}).feedback || PLACEHOLDER_FEEDBACK;
+        const items = feedback.items.length ? feedback.items : PLACEHOLDER_FEEDBACK.items;
+
+        const n = feedbackIndex(items.length);
+        const item = items[n - 1];
+        const isLast = n === items.length;
 
         document.getElementById('feedback-title').textContent = item.title;
         document.getElementById('feedback-details').textContent = item.details;
         document.getElementById('feedback-label').innerHTML = AI_ICON + 'AI feedback';
+        if (item.mustChange) document.getElementById('feedback-must-change').hidden = false;
 
         /* Whatever was written last, including edits made on the feedback page
            before this one. */

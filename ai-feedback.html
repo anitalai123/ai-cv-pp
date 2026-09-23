@@ -25,18 +25,32 @@
             <span class="govuk-caption-l">Personal profile</span>
             <h1 class="govuk-heading-l">AI feedback</h1>
 
-            <p class="govuk-body" id="feedback-summary"></p>
+            <p class="govuk-body" id="feedback-loading">Reading your profile&hellip;</p>
 
-            <!-- rememberExpanded off, so coming back here always lands with
-                 every piece of feedback collapsed. -->
-            <div class="govuk-accordion" data-module="govuk-accordion" id="feedback-accordion"
-                 data-remember-expanded="false"></div>
+            <div class="govuk-warning-text" id="feedback-error" hidden>
+              <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+              <strong class="govuk-warning-text__text">
+                <span class="govuk-visually-hidden">Warning</span>
+                <span id="feedback-error-text"></span>
+              </strong>
+            </div>
 
-            <p class="govuk-body-s govuk-hint">Responses are AI-generated and may be inaccurate.</p>
+            <div id="feedback-body" hidden>
+              <h2 class="govuk-heading-s workhub-feedback-label">Overall</h2>
+              <p class="govuk-body" id="feedback-summary"></p>
 
-            <a href="feedback-edit.html?n=1" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-              Start editing
-            </a>
+              <!-- rememberExpanded off, so coming back here always lands with
+                   every piece of feedback collapsed. Built before GOV.UK
+                   Frontend initialises it. -->
+              <div class="govuk-accordion" id="feedback-accordion"
+                   data-remember-expanded="false"></div>
+
+              <p class="govuk-body-s govuk-hint">Responses are AI-generated and may be inaccurate.</p>
+
+              <a href="feedback-edit.html?n=1" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                Start editing
+              </a>
+            </div>
 
           </div>
         </div>
@@ -50,28 +64,56 @@
     <script src="assets/flows.js"></script>
     <script src="assets/ai-flow.js"></script>
     <script>
-      document.getElementById('feedback-summary').textContent = AI_FEEDBACK_SUMMARY;
+      document.addEventListener('DOMContentLoaded', function () {
+        const loading = document.getElementById('feedback-loading');
+        const body = document.getElementById('feedback-body');
+        const accordion = document.getElementById('feedback-accordion');
 
-      /* Built before GOV.UK Frontend initialises, so the accordion finds its
-         sections already in the page. */
-      document.getElementById('feedback-accordion').innerHTML = AI_FEEDBACK.map(function (item, i) {
-        const n = i + 1;
-        return '<div class="govuk-accordion__section">' +
-          '<div class="govuk-accordion__section-header">' +
-            '<h2 class="govuk-accordion__section-heading">' +
-              '<span class="govuk-accordion__section-button" id="feedback-heading-' + n + '">' +
-                escapeHtml(item.title) + '</span>' +
-            '</h2>' +
-          '</div>' +
-          '<div id="feedback-content-' + n + '" class="govuk-accordion__section-content">' +
-            '<p class="govuk-body">' + escapeHtml(item.details) + '</p>' +
-            '<p class="govuk-body">' +
-              '<a class="govuk-link" href="feedback-edit.html?n=' + n + '">Start editing' +
-                '<span class="govuk-visually-hidden"> ' + escapeHtml(item.title) + '</span></a>' +
-            '</p>' +
-          '</div>' +
-        '</div>';
-      }).join('');
+        function render(feedback) {
+          document.getElementById('feedback-summary').textContent = feedback.summary;
+
+          accordion.innerHTML = feedback.items.map(function (item, i) {
+            const n = i + 1;
+            /* GOV.UK Frontend 6 folded blue into the default tag, so an
+               unmodified tag is the blue one. */
+            const tag = item.mustChange
+              ? '<strong class="govuk-tag workhub-must-change">Must change</strong>'
+              : '';
+            return '<div class="govuk-accordion__section">' +
+              '<div class="govuk-accordion__section-header">' +
+                '<h2 class="govuk-accordion__section-heading">' +
+                  '<span class="govuk-accordion__section-button" id="feedback-heading-' + n + '">' +
+                    escapeHtml(item.title) + '</span>' +
+                '</h2>' +
+                (tag ? '<div class="govuk-accordion__section-summary govuk-body">' + tag + '</div>' : '') +
+              '</div>' +
+              '<div id="feedback-content-' + n + '" class="govuk-accordion__section-content">' +
+                '<p class="govuk-body">' + escapeHtml(item.details) + '</p>' +
+                '<p class="govuk-body">' +
+                  '<a class="govuk-link" href="feedback-edit.html?n=' + n + '">Start editing' +
+                    '<span class="govuk-visually-hidden"> ' + escapeHtml(item.title) + '</span></a>' +
+                '</p>' +
+              '</div>' +
+            '</div>';
+          }).join('');
+
+          loading.hidden = true;
+          body.hidden = false;
+
+          /* GOV.UK Frontend has already run by now, so the accordion has to be
+             started by hand once its sections exist. */
+          accordion.setAttribute('data-module', 'govuk-accordion');
+          window.initAccordion(accordion);
+        }
+
+        requestFeedback().then(render).catch(function (error) {
+          /* Keep the prototype walkable when the API is unreachable. */
+          document.getElementById('feedback-error-text').textContent =
+            'Showing example feedback: ' + error.message;
+          document.getElementById('feedback-error').hidden = false;
+          render(PLACEHOLDER_FEEDBACK);
+        });
+      });
     </script>
   </body>
 </html>

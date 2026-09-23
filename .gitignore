@@ -1,3 +1,6 @@
 .DS_Store
 *.log
 .vercel
+.env
+.env.local
+__pycache__/
