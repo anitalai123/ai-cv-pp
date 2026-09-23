@@ -52,7 +52,13 @@
             <p class="govuk-body">Completing these can help your CV get noticed</p>
             <ul class="govuk-task-list" id="task-list-optional"></ul>
 
-            <h2 class="govuk-heading-m">3. Check and download</h2>
+            <!-- Option 2 only: the personal profile is a section of its own rather
+                 than the last of the optional ones. task-list.js shows it, moves
+                 the task into it, and renumbers Check and download. -->
+            <h2 class="govuk-heading-m" id="heading-profile" hidden>3. Write Personal Profile</h2>
+            <ul class="govuk-task-list" id="task-list-profile" hidden></ul>
+
+            <h2 class="govuk-heading-m" id="heading-finish">3. Check and download</h2>
             <ul class="govuk-task-list" id="task-list-finish"></ul>
 
             <a href="#" role="button" draggable="false" class="govuk-button govuk-!-margin-top-4" data-module="govuk-button">

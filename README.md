@@ -78,6 +78,11 @@ and the row marked Completed:
 - **Skills**: `skills.html` on its own
 - **Add custom section**: `additional-info.html` → `additional-info-review.html`
 
+Option 2 gives the personal profile a section of its own on the task list -
+"3. Write Personal Profile", between the optional sections and Check and
+download, which becomes 4. `applyOptionTwoLayout` in `assets/task-list.js` moves
+the task; the task and its hint are otherwise unchanged.
+
 Option 1 adds an AI feedback branch off the personal profile. Answering Yes to
 "Would you like AI feedback?" goes to `job-title.html`; from there, any section
 still Not started sends you to `more-about-you.html` before `ai-feedback.html`.

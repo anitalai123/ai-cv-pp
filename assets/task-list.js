@@ -110,10 +110,29 @@ function renderTask(task, state) {
     title + hint + '</div>' + renderStatus(status, statusId) + '</li>';
 }
 
+/* Option 2 gives the personal profile a section of its own, between the
+   optional sections and Check and download, rather than sitting last among the
+   optional ones. The task itself, hint included, is unchanged. */
+function applyOptionTwoLayout() {
+  const optional = TASK_SECTIONS['task-list-optional'];
+  const at = optional.findIndex(function (task) {
+    return task.id === 'profile';
+  });
+  if (at === -1) return;
+
+  TASK_SECTIONS['task-list-profile'] = optional.splice(at, 1);
+
+  document.getElementById('heading-profile').hidden = false;
+  document.getElementById('task-list-profile').hidden = false;
+  document.getElementById('heading-finish').textContent = '4. Check and download';
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   /* Reaching the task list ends any detour from "We need more about you", so a
      section finished later on does not bounce back there. */
   Return.take();
+
+  if (window.protoOption === '2') applyOptionTwoLayout();
 
   const state = Store.read();
 
