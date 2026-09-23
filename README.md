@@ -144,6 +144,11 @@ inventing experience. The response is constrained by a JSON schema
 summary and up to 5 items, each with a title, the detail, and whether it is a
 must change.
 
+The model is `claude-sonnet-5` at medium effort. Opus 5 at the default effort
+gave slightly richer feedback but took 13-16 seconds, which is a long time to
+sit on a loading page; this runs in 7-9 and reads much the same. Both are set in
+`api/feedback.py`.
+
 Feedback is cached in `sessionStorage` against the profile and job title it was
 written about, so the edit pages show the same items the accordion did and a
 reload does not spend another request. Change either, and the next visit asks

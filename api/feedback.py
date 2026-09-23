@@ -12,7 +12,7 @@ from http.server import BaseHTTPRequestHandler
 
 import anthropic
 
-MODEL = 'claude-opus-5'
+MODEL = 'claude-sonnet-5'
 MAX_ITEMS = 5
 
 SYSTEM = """You are an experienced careers adviser working for a UK employment
@@ -182,7 +182,12 @@ def feedback(data):
         max_tokens=16000,
         system=SYSTEM,
         thinking={'type': 'adaptive'},
-        output_config={'format': {'type': 'json_schema', 'schema': SCHEMA}},
+        # medium rather than the default high: the task is well specified, and
+        # the page is waiting on the answer
+        output_config={
+            'effort': 'medium',
+            'format': {'type': 'json_schema', 'schema': SCHEMA},
+        },
         messages=[{'role': 'user', 'content': build_prompt(data)}],
     )
 
