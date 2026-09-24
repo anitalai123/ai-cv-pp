@@ -52,13 +52,13 @@ development only: the deployed site is served by Vercel.
 | `work-history-info.html` | `/cv/create/work-history/info` | Guidance before adding a job. |
 | `work-history-job.html` | dynamic route | Job title, employer, dates, "are you at this job now". |
 | `work-history-responsibilities.html` | dynamic route | Repeatable responsibilities, 1,500 characters each. |
-| `work-history-review.html` | `/cv/create/work-history/review` | Summary cards for jobs and gaps, with Change and Remove. |
+| `work-history-review.html` | `/cv/create/work-history/review` | Summary cards for jobs and gaps, with Change and Remove. No Back link. |
 | `work-history-gaps-info.html` | `/cv/create/work-history/gaps/info` | Guidance before adding a gap. |
 | `work-history-gaps.html` | `/cv/create/work-history/gaps` | Title, dates and a summary of the gap. |
 | `education-info.html` | `/cv/create/education/info` | Guidance before adding a qualification. |
 | `education-type.html` | `/cv/create/education/type` | Qualification type and institution. |
 | `education-subjects.html` | dynamic route | Repeatable subject and grade pairs. |
-| `education-review.html` | `/cv/create/education/review` | Summary cards, with Change and Remove. |
+| `education-review.html` | `/cv/create/education/review` | Summary cards, with Change and Remove. No Back link. |
 | `skills.html` | `/cv/create/skills` | Repeatable skill inputs, 128 characters each. Starts with 4, each with a Remove link. |
 | `additional-info.html` | `/cv/create/additional-info` | Custom section title and details. |
 | `additional-info-review.html` | dynamic route | Summary cards for custom sections, with Change and Remove. |
