@@ -37,6 +37,27 @@ from disk — edits appear not to land until a hard reload. This sends
 `no-store`, so an ordinary reload always picks up the latest edit. Local
 development only: the deployed site is served by Vercel.
 
+## Deploying and working together
+
+The Vercel project (`anitalai123s-projects/ai-cv-pp`) is connected to this
+repo, so **every push to `main` deploys to production** - usually within half a
+minute. There are no branches or reviews: collaborators push straight to
+`main`. If something breaks, roll back from the Vercel dashboard or revert the
+commit.
+
+More than one person pushes to `main`, so:
+
+- `git pull` before starting work, so edits build on the latest version.
+- If a push is refused because someone else pushed first, pull and push again.
+  Git asks for the two to be combined first only when both edited the same
+  lines.
+- Never `git push --force`: it replaces what is on GitHub and throws away
+  everyone else's changes.
+
+Collaborators need their own `.env` for real AI feedback locally. Without one
+the feedback page shows the example feedback, which is enough for copy and
+layout work.
+
 ## Pages
 
 | File | Mirrors | Notes |
@@ -47,7 +68,7 @@ development only: the deployed site is served by Vercel.
 | `contact-name.html` | — | Full name. |
 | `contact-details.html` | — | Email and phone checkboxes, each revealing its field when ticked. |
 | `profile-info.html` | `/cv/create/profile/info` | Guidance page, including the "If you are using AI to help you" details. |
-| `profile.html` | `/cv/create/profile` | Character-counted textarea, and the way into the AI feedback: a button in option 1, radios in option 2. |
+| `profile.html` | `/cv/create/profile` | Character-counted textarea, and the way into the AI feedback: a button in option 1, radios with the job revealed under Yes in option 2. |
 | `work-history.html` | `/cv/create/work-history` | What can be included, and the two ways in. |
 | `work-history-info.html` | `/cv/create/work-history/info` | Guidance before adding a job. |
 | `work-history-job.html` | dynamic route | Job title, employer, dates, "are you at this job now". |
@@ -64,7 +85,7 @@ development only: the deployed site is served by Vercel.
 | `additional-info-review.html` | dynamic route | Summary cards for custom sections, with Change and Remove. |
 | `job-title.html` | — | The job the feedback should be tailored to. Option 1 only. |
 | `more-about-you.html` | — | Lists the sections still Not started before showing feedback. |
-| `ai-feedback.html` | — | Overall comment, then up to 5 pieces of feedback in an accordion. |
+| `ai-feedback.html` | — | Rotating loading phrases, then an overall comment and up to 5 pieces of feedback in an accordion. |
 | `feedback-edit.html` | — | One piece of feedback beside the profile, editable. `?n=` picks which. |
 
 Flows, each ending on Done and returning to the task list with a success banner
@@ -97,14 +118,19 @@ between them are a handful of conditionals, not a second set of pages:
 | Job title | `job-title.html`, after Get AI feedback | a "Job you are applying for (optional)" field revealed by Yes |
 | Preview | a secondary button beside Get AI feedback | a secondary button under Done |
 
+Option 2's radios are stacked rather than inline because GOV.UK Frontend does
+not support conditional reveals on inline radios.
+
 `applyOptionTwoLayout` in `assets/task-list.js` moves the task; the task and its
 hint are otherwise unchanged.
 
 Once the job title is in, the branch is the same: if any section is still Not
 started, `more-about-you.html`, then `ai-feedback.html`. A
 section opened from that page returns to it when its Done button is pressed,
-rather than dropping you back on the task list. Asking for feedback on an empty
-profile shows an error instead - there would be nothing to give feedback on.
+rather than dropping you back on the task list. Contact details is not one of
+the sections that page asks for, since the feedback does not use it. Asking for
+feedback on an empty profile shows an error instead - there would be nothing to
+give feedback on.
 
 `feedback-edit.html` walks the items with Next feedback, saving the profile each
 time so later pages show the edits made on earlier ones. The accordion is set to
@@ -150,8 +176,9 @@ never sent to the browser - the page posts the CV answers and gets finished
 feedback back. On Vercel, set `ANTHROPIC_API_KEY` in Project Settings ->
 Environment Variables; locally, put it in `.env`.
 
-The request sends everything the person has entered - profile, the job they are
-going for, work history and gaps, education, skills and any custom sections - so
+The request sends everything the person has entered apart from their contact
+details - profile, the job they are going for, work history and gaps,
+education, skills and any custom sections - so
 the feedback can suggest things they could say about themselves rather than
 inventing experience. The response is constrained by a JSON schema
 (`output_config.format`), so the page never has to parse prose: it gets a
@@ -163,11 +190,17 @@ gave slightly richer feedback but took 13-16 seconds, which is a long time to
 sit on a loading page; this runs in 7-9 and reads much the same. Both are set in
 `api/feedback.py`.
 
+While it waits, the page rotates through five phrases two seconds apart
+("Looking at what you've entered..." to "Adding the final polish..."), holding
+on the last if the request runs long. They are in `LOADING_PHRASES` in
+`ai-feedback.html`.
+
 Feedback is saved with the rest of the answers, so the edit pages show the same
 items the accordion did, a reload does not spend another request, and coming back
 later shows the feedback that was being worked through. Editing the profile
 against it does not replace it; asking for feedback again - `job-title.html` in
-option 1, Yes and Done in option 2 - writes it afresh. Reset on the cover page clears it with everything else.
+option 1, Yes and Done in option 2 - writes it afresh. Reset on the cover page
+clears it with everything else.
 
 If the API cannot be reached - no key, no SDK installed, offline - the page
 falls back to the example feedback in `PLACEHOLDER_FEEDBACK` and shows a warning
@@ -208,8 +241,22 @@ needs - the pages themselves have none.
 
 ## Copy
 
-All wording is lifted verbatim from the live service's translation bundle, so
-headings, hints, bullet lists and the bookkeeper example match production.
+The pages the live service already has started with wording lifted verbatim
+from its translation bundle, so headings, hints, bullet lists and the
+bookkeeper example matched production. Everything new to this prototype - the
+contact details pages, the AI feedback pages and their way in, the loading
+phrases, the guidance on the responsibilities page - is draft copy, and all of
+it is open to a content design pass.
+
+Most copy is in the HTML pages. A few pieces are in JavaScript instead:
+
+- task list names and hints: `TASK_SECTIONS` in `assets/task-list.js`
+- "We need more about you" section names: `AI_SECTIONS` in `assets/ai-flow.js`
+- the example feedback: `PLACEHOLDER_FEEDBACK` in `assets/ai-flow.js`
+- the loading phrases: `LOADING_PHRASES` in `ai-feedback.html`
+- success banners: the `Flash.set` and `finishSection` calls in `assets/*.js`,
+  `profile.html` and `feedback-edit.html`
+- the feedback the AI writes: the prompt in `api/feedback.py`
 
 ## Assumptions
 
