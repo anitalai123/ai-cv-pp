@@ -108,6 +108,10 @@ time so later pages show the edits made on earlier ones. The accordion is set to
 everything collapsed, and the Back link at the top of an edit page returns to the
 previous page rather than to the list.
 
+Pressing Done on `profile.html` or on any `feedback-edit.html` page remembers
+that page, and the Personal profile link on the task list goes back to it - the
+same piece of feedback included - rather than to `profile-info.html`.
+
 Jobs and gaps share one ordered list, so they interleave on the review page the
 way the live service shows them.
 
@@ -155,10 +159,11 @@ gave slightly richer feedback but took 13-16 seconds, which is a long time to
 sit on a loading page; this runs in 7-9 and reads much the same. Both are set in
 `api/feedback.py`.
 
-Feedback is cached in `sessionStorage` against the profile and job title it was
-written about, so the edit pages show the same items the accordion did and a
-reload does not spend another request. Change either, and the next visit asks
-again.
+Feedback is saved with the rest of the answers, so the edit pages show the same
+items the accordion did, a reload does not spend another request, and coming back
+later shows the feedback that was being worked through. Editing the profile
+against it does not replace it; going through `job-title.html` again asks for
+fresh feedback. Reset on the cover page clears it with everything else.
 
 If the API cannot be reached - no key, no SDK installed, offline - the page
 falls back to the example feedback in `PLACEHOLDER_FEEDBACK` and shows a warning

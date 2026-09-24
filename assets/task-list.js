@@ -132,6 +132,11 @@ document.addEventListener('DOMContentLoaded', function () {
      section finished later on does not bounce back there. */
   Return.take();
 
+  /* The personal profile picks up on whichever page of it was open last. */
+  TASK_SECTIONS['task-list-optional'].forEach(function (task) {
+    if (task.id === 'profile') task.href = ProfileResume.href();
+  });
+
   if (window.protoOption === '2') applyOptionTwoLayout();
 
   const state = Store.read();

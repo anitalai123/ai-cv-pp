@@ -82,6 +82,21 @@ const Return = {
   },
 };
 
+/* The personal profile page someone left from, so the task list can take them
+   back there instead of to the start of the section. Leaving means pressing
+   Done - on the Write a personal profile page or on any of the feedback edit
+   pages - and nothing else moves it. Kept with the answers, per option, so it
+   survives a closed tab and Reset clears it. */
+const ProfileResume = {
+  START: 'profile-info.html',
+  leavingFrom() {
+    Store.write({ profileResume: window.location.pathname.split('/').pop() + window.location.search });
+  },
+  href() {
+    return Store.read().profileResume || this.START;
+  },
+};
+
 /* The success banner shown at the top of the task list after finishing a section.
    Stored separately so it is shown once and then forgotten. */
 const Flash = {

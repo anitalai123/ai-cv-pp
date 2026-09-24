@@ -32,35 +32,26 @@ function afterJobTitle() {
 
 /* ------------------------------------------------------------- feedback */
 
-/* Feedback comes from /api/feedback, which asks Claude. The response is kept in
-   sessionStorage so the edit pages show the same items the accordion did without
-   asking again - and so a reload does not spend another request. Store.clear on
-   the cover page does not touch it; requestFeedback drops it whenever the
-   profile or job title it was written about has changed. */
-function feedbackKey(option) {
-  return 'build-a-cv-feedback-' + (option || window.protoOption);
+/* Feedback comes from /api/feedback, which asks Claude. The response is kept
+   with the rest of the answers, so the edit pages show the same items the
+   accordion did, and someone coming back later - even in a new tab - picks up
+   the feedback they were working through rather than a fresh set. Editing the
+   profile does not replace it: only asking again from the job title page does
+   (see forgetFeedback), and the cover page's Reset clears it with everything
+   else. */
+function savedFeedback() {
+  return Store.read().feedback || null;
 }
 
-function cachedFeedback() {
-  try {
-    return JSON.parse(sessionStorage.getItem(feedbackKey()));
-  } catch (e) {
-    return null;
-  }
-}
-
-/* What the feedback was written about. Different answers, different feedback. */
-function feedbackSubject(state) {
-  return JSON.stringify([state.profile || '', state.jobTitle || '']);
+function forgetFeedback() {
+  Store.write({ feedback: null });
 }
 
 function requestFeedback() {
   const state = Store.read();
-  const subject = feedbackSubject(state);
-  const cached = cachedFeedback();
 
-  if (cached && cached.subject === subject) {
-    return Promise.resolve(cached.feedback);
+  if (state.feedback) {
+    return Promise.resolve(state.feedback);
   }
 
   return fetch('/api/feedback', {
@@ -81,9 +72,7 @@ function requestFeedback() {
     });
   }).then(function (feedback) {
     feedback.items = (feedback.items || []).slice(0, 5);
-    try {
-      sessionStorage.setItem(feedbackKey(), JSON.stringify({ subject: subject, feedback: feedback }));
-    } catch (e) {}
+    Store.write({ feedback: feedback });
     return feedback;
   });
 }

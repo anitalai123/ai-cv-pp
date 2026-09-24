@@ -204,6 +204,7 @@
 
           /* An empty profile leaves the task Not started, so there is nothing to
              announce on the task list. */
+          ProfileResume.leavingFrom();
           if (profile) Flash.set('Personal Profile updated');
           window.location.href = 'task-list.html';
         });

@@ -73,9 +73,9 @@
     <script src="assets/ai-flow.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        /* Already fetched on the feedback page, so this reads the cached
+        /* Already fetched on the feedback page, so this reads the saved
            response rather than asking again. */
-        const feedback = (cachedFeedback() || {}).feedback || PLACEHOLDER_FEEDBACK;
+        const feedback = savedFeedback() || PLACEHOLDER_FEEDBACK;
         const items = feedback.items.length ? feedback.items : PLACEHOLDER_FEEDBACK.items;
 
         const n = feedbackIndex(items.length);
@@ -100,6 +100,7 @@
 
         function finish() {
           save();
+          ProfileResume.leavingFrom();
           Flash.set('Personal Profile updated');
           window.location.href = 'task-list.html';
         }

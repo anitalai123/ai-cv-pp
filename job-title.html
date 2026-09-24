@@ -54,6 +54,9 @@
         document.getElementById('job-title-form').addEventListener('submit', function (event) {
           event.preventDefault();
           Store.write({ jobTitle: input.value.trim() });
+          /* Coming through here is asking for feedback, so it is written
+             afresh about the profile as it stands now. */
+          forgetFeedback();
           /* Straight to the feedback when nothing is outstanding, otherwise the
              nudge page lists what is still missing. */
           window.location.href = afterJobTitle();
