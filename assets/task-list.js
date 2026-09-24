@@ -7,7 +7,7 @@ const TASK_SECTIONS = {
       id: 'contactDetails',
       name: 'Contact details',
       hint: 'For employers to contact you about your application',
-      href: '#',
+      href: 'contact-name.html',
     },
     {
       id: 'workHistory',

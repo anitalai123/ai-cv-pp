@@ -1,5 +1,6 @@
-/* Skills and the custom "Add a section" flow. Both are short enough to share a
-   file: skills is one repeatable page, custom sections are an add page and a
+/* Contact details, skills and the custom "Add a section" flow. All short
+   enough to share a file: contact details is a name page and a contact methods
+   page, skills is one repeatable page, custom sections are an add page and a
    review page. */
 
 /* Where a section's Done or Continue button goes. "We need more about you"
@@ -12,6 +13,50 @@ function finishSection(banner) {
   }
   Flash.set(banner);
   window.location.href = 'task-list.html';
+}
+
+/* ------------------------------------------------------ contact details */
+
+function contactDetails() {
+  return Store.read().contactDetails || {};
+}
+
+const contactNameForm = document.getElementById('contact-name-form');
+if (contactNameForm) {
+  document.getElementById('full-name').value = contactDetails().name || '';
+
+  contactNameForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const name = formValues(contactNameForm).name;
+    Store.write({ contactDetails: Object.assign(contactDetails(), { name: name }) });
+    window.location.href = 'contact-details.html';
+  });
+}
+
+const contactMethodsForm = document.getElementById('contact-methods-form');
+if (contactMethodsForm) {
+  /* Tick the boxes for whatever was saved before GOV.UK Frontend initialises,
+     so it reveals those fields on load and leaves the rest collapsed. */
+  const saved = contactDetails();
+  ['email', 'phone'].forEach(function (method) {
+    if (isBlank(saved[method])) return;
+    document.getElementById('contact-' + method).checked = true;
+    contactMethodsForm[method].value = saved[method];
+  });
+
+  contactMethodsForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const values = formValues(contactMethodsForm);
+    const methods = [].concat(values.methods || []);
+    /* An unticked method is dropped even if its field still holds text. */
+    Store.write({
+      contactDetails: Object.assign(contactDetails(), {
+        email: methods.indexOf('email') !== -1 ? values.email : '',
+        phone: methods.indexOf('phone') !== -1 ? values.phone : '',
+      }),
+    });
+    finishSection('Contact details updated');
+  });
 }
 
 /* --------------------------------------------------------------- skills */

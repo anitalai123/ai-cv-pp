@@ -44,6 +44,8 @@ development only: the deployed site is served by Vercel.
 | `password.html` | — | Prototype password gate. The password is `star`. |
 | `index.html` | — | Prototype cover page. Prototype caveats, then an entry button and its own Reset button per option. Not a page from the live service. |
 | `task-list.html` | `/cv/create/task-list` | Three sections, statuses derived from saved answers. Four in option 2, which gives the profile its own. |
+| `contact-name.html` | — | Full name. |
+| `contact-details.html` | — | Email and phone checkboxes, each revealing its field when ticked. |
 | `profile-info.html` | `/cv/create/profile/info` | Guidance page, including the "If you are using AI to help you" details. |
 | `profile.html` | `/cv/create/profile` | Character-counted textarea, and the way into the AI feedback: radios in option 1, a button in option 2. |
 | `work-history.html` | `/cv/create/work-history` | What can be included, and the two ways in. |
@@ -68,6 +70,7 @@ development only: the deployed site is served by Vercel.
 Flows, each ending on Done and returning to the task list with a success banner
 and the row marked Completed:
 
+- **Contact details**: `contact-name.html` → `contact-details.html`
 - **Personal profile**: `profile-info.html` → `profile.html`
 - **Work history**: `work-history.html` → `work-history-info.html` →
   `work-history-job.html` → `work-history-responsibilities.html` →
@@ -190,7 +193,8 @@ needs - the pages themselves have none.
   and the repeatable "Add another ..." inputs.
 - `assets/work-history.js` and `assets/education.js` — the two flows' form
   handling and review pages.
-- `assets/sections.js` — skills and the custom "Add a section" flow.
+- `assets/sections.js` — contact details, skills and the custom "Add a section"
+  flow.
 - `assets/ai-flow.js` — the option 1 AI feedback branch: which sections count as
   outstanding, where the job title page goes next, and the call to
   `/api/feedback` with its cache and fallback.
