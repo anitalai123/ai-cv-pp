@@ -47,7 +47,7 @@ development only: the deployed site is served by Vercel.
 | `contact-name.html` | — | Full name. |
 | `contact-details.html` | — | Email and phone checkboxes, each revealing its field when ticked. |
 | `profile-info.html` | `/cv/create/profile/info` | Guidance page, including the "If you are using AI to help you" details. |
-| `profile.html` | `/cv/create/profile` | Character-counted textarea, and the way into the AI feedback: radios in option 1, a button in option 2. |
+| `profile.html` | `/cv/create/profile` | Character-counted textarea, and the way into the AI feedback: a button in option 1, radios in option 2. |
 | `work-history.html` | `/cv/create/work-history` | What can be included, and the two ways in. |
 | `work-history-info.html` | `/cv/create/work-history/info` | Guidance before adding a job. |
 | `work-history-job.html` | dynamic route | Job title, employer, dates, "are you at this job now". |
@@ -62,7 +62,7 @@ development only: the deployed site is served by Vercel.
 | `skills.html` | `/cv/create/skills` | Repeatable skill inputs, 128 characters each. Starts with 4, each with a Remove link. |
 | `additional-info.html` | `/cv/create/additional-info` | Custom section title and details. |
 | `additional-info-review.html` | dynamic route | Summary cards for custom sections, with Change and Remove. |
-| `job-title.html` | — | The job the feedback should be tailored to. |
+| `job-title.html` | — | The job the feedback should be tailored to. Option 1 only. |
 | `more-about-you.html` | — | Lists the sections still Not started before showing feedback. |
 | `ai-feedback.html` | — | Overall comment, then up to 5 pieces of feedback in an accordion. |
 | `feedback-edit.html` | — | One piece of feedback beside the profile, editable. `?n=` picks which. |
@@ -93,14 +93,15 @@ between them are a handful of conditionals, not a second set of pages:
 | | Option 1 | Option 2 |
 | --- | --- | --- |
 | Personal profile on the task list | last of the optional sections | its own section, "3. Write Personal Profile", pushing Check and download to 4 |
-| Way into the AI feedback | "Would you like AI feedback?" Yes/No radios | a Get AI feedback secondary button |
-| Preview | a secondary button under Done | a secondary button beside Get AI feedback |
+| Way into the AI feedback | a Get AI feedback secondary button | "Would you like AI feedback?" Yes/No radios |
+| Job title | `job-title.html`, after Get AI feedback | a "Job you are applying for (optional)" field revealed by Yes |
+| Preview | a secondary button beside Get AI feedback | a secondary button under Done |
 
 `applyOptionTwoLayout` in `assets/task-list.js` moves the task; the task and its
 hint are otherwise unchanged.
 
-From either entry point the branch is the same: `job-title.html`, then, if any
-section is still Not started, `more-about-you.html` before `ai-feedback.html`. A
+Once the job title is in, the branch is the same: if any section is still Not
+started, `more-about-you.html`, then `ai-feedback.html`. A
 section opened from that page returns to it when its Done button is pressed,
 rather than dropping you back on the task list. Asking for feedback on an empty
 profile shows an error instead - there would be nothing to give feedback on.
@@ -165,8 +166,8 @@ sit on a loading page; this runs in 7-9 and reads much the same. Both are set in
 Feedback is saved with the rest of the answers, so the edit pages show the same
 items the accordion did, a reload does not spend another request, and coming back
 later shows the feedback that was being worked through. Editing the profile
-against it does not replace it; going through `job-title.html` again asks for
-fresh feedback. Reset on the cover page clears it with everything else.
+against it does not replace it; asking for feedback again - `job-title.html` in
+option 1, Yes and Done in option 2 - writes it afresh. Reset on the cover page clears it with everything else.
 
 If the API cannot be reached - no key, no SDK installed, offline - the page
 falls back to the example feedback in `PLACEHOLDER_FEEDBACK` and shows a warning
@@ -195,7 +196,7 @@ needs - the pages themselves have none.
   handling and review pages.
 - `assets/sections.js` — contact details, skills and the custom "Add a section"
   flow.
-- `assets/ai-flow.js` — the option 1 AI feedback branch: which sections count as
+- `assets/ai-flow.js` — the AI feedback branch: which sections count as
   outstanding, where the job title page goes next, and the call to
   `/api/feedback` with its cache and fallback.
 - `api/feedback.py` — the serverless function that asks Claude, and the prompt

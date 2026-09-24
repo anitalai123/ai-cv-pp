@@ -1,5 +1,6 @@
-/* The option 1 AI feedback branch: profile -> job title -> (we need more about
-   you) -> AI feedback. Shared by the pages in that branch. */
+/* The AI feedback branch: profile -> job title -> (we need more about you) ->
+   AI feedback. Option 1 asks for the job title on a page of its own, option 2
+   on the profile page. Shared by the pages in that branch. */
 
 /* The sections AI feedback draws on, besides the personal profile itself. */
 const AI_SECTIONS = [
@@ -28,6 +29,12 @@ function outstandingSections() {
    section is filled in, otherwise via the nudge page. */
 function afterJobTitle() {
   return outstandingSections().length ? 'more-about-you.html' : 'ai-feedback.html';
+}
+
+/* Where the job title is asked for, for the Back links after it. Option 1 has
+   a page of its own; option 2 asks on the profile page, revealed by Yes. */
+function jobTitlePage() {
+  return window.protoOption === '1' ? 'job-title.html' : 'profile.html';
 }
 
 /* ------------------------------------------------------------- feedback */

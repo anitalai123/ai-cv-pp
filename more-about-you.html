@@ -16,7 +16,7 @@
     <header data-workhub-header></header>
 
     <div class="govuk-width-container">
-      <a href="job-title.html" class="govuk-back-link">Back</a>
+      <a href="job-title.html" class="govuk-back-link" id="more-about-you-back-link">Back</a>
 
       <main class="govuk-main-wrapper" id="main-content">
         <div class="govuk-grid-row">
@@ -45,6 +45,8 @@
     <script src="assets/ai-flow.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('more-about-you-back-link').href = jobTitlePage();
+
         const sections = outstandingSections();
 
         /* Everything is filled in - there is nothing to nudge about, so go

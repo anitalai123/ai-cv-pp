@@ -68,9 +68,8 @@
         /* Back retraces the way in: "We need more about you" sits between the
            job title and this page whenever a section is still Not started.
            Once none are, that page only forwards here, so Back skips it. */
-        if (outstandingSections().length) {
-          document.getElementById('feedback-back-link').href = 'more-about-you.html';
-        }
+        document.getElementById('feedback-back-link').href =
+          outstandingSections().length ? 'more-about-you.html' : jobTitlePage();
 
         const loading = document.getElementById('feedback-loading');
         const body = document.getElementById('feedback-body');

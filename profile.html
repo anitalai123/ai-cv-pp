@@ -72,19 +72,28 @@
 
               <!-- AI feedback will go here -->
 
-              <!-- Option 1 only: the AI feedback branch starts here. -->
+              <!-- Option 2 only: the AI feedback branch starts here. -->
               <div class="govuk-form-group" id="ai-feedback-group">
                 <fieldset class="govuk-fieldset" aria-describedby="ai-feedback-hint">
                   <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                     Would you like AI feedback?
                   </legend>
                   <div id="ai-feedback-hint" class="govuk-hint">
-                    Get feedback based on your information and the job you're going for
+                    Get tailored feedback based on the information you've entered
                   </div>
-                  <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
+                  <!-- Stacked rather than inline: GOV.UK Frontend does not
+                       support conditional reveals on inline radios. -->
+                  <div class="govuk-radios" data-module="govuk-radios">
                     <div class="govuk-radios__item">
-                      <input class="govuk-radios__input" id="ai-feedback-yes" name="aiFeedback" type="radio" value="yes">
+                      <input class="govuk-radios__input" id="ai-feedback-yes" name="aiFeedback" type="radio" value="yes"
+                             data-aria-controls="conditional-ai-feedback-yes">
                       <label class="govuk-label govuk-radios__label" for="ai-feedback-yes">Yes</label>
+                    </div>
+                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-ai-feedback-yes">
+                      <div class="govuk-form-group">
+                        <label class="govuk-label" for="job-title">Job you are applying for (optional)</label>
+                        <input class="govuk-input" id="job-title" name="jobTitle" type="text">
+                      </div>
                     </div>
                     <div class="govuk-radios__item">
                       <input class="govuk-radios__input" id="ai-feedback-no" name="aiFeedback" type="radio" value="no">
@@ -94,8 +103,8 @@
                 </fieldset>
               </div>
 
-              <!-- Option 2 only: these replace option 1's radios, and carry the
-                   preview that option 1 puts under Done. -->
+              <!-- Option 1 only: these replace option 2's radios, and carry the
+                   preview that option 2 puts under Done. -->
               <div class="govuk-button-group" id="profile-option-2-buttons" hidden>
                 <a href="job-title.html" role="button" draggable="false" id="get-ai-feedback"
                    class="govuk-button govuk-button--secondary" data-module="govuk-button">
@@ -108,7 +117,7 @@
 
               <button type="submit" class="govuk-button" data-module="govuk-button">Done</button>
 
-              <!-- Option 1 only: the preview as a secondary button under Done. -->
+              <!-- Option 2 only: the preview as a secondary button under Done. -->
               <div id="preview-button-wrapper">
                 <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button">
                   Preview section
@@ -126,11 +135,12 @@
     <script type="module" src="assets/chrome.js"></script>
     <script src="assets/store.js"></script>
     <script src="assets/flows.js"></script>
+    <script src="assets/ai-flow.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         /* chrome.js is a module, so window.protoOption is set by the time this runs. */
-        const isOption2 = window.protoOption === '2';
-        if (isOption2) {
+        const usesButtons = window.protoOption === '1';
+        if (usesButtons) {
           document.getElementById('profile-option-2-buttons').hidden = false;
           /* Same stars icon as the feedback pages, so the button reads as the
              way into the AI part of the service. */
@@ -140,7 +150,9 @@
         }
 
         const textarea = document.getElementById('personal-profile');
+        const jobTitle = document.getElementById('job-title');
         textarea.value = Store.read().profile || '';
+        jobTitle.value = Store.read().jobTitle || '';
         // GOV.UK Frontend has already counted an empty textarea by this point.
         textarea.dispatchEvent(new Event('input', { bubbles: true }));
 
@@ -154,6 +166,10 @@
           document.querySelectorAll('input[name="aiFeedback"]').forEach(function (radio) {
             radio.checked = false;
           });
+          /* GOV.UK Frontend only syncs the reveal on click, so unticking Yes
+             from here has to close the job title field by hand. */
+          document.getElementById('conditional-ai-feedback-yes').classList.add('govuk-radios__conditional--hidden');
+          document.getElementById('ai-feedback-yes').setAttribute('aria-expanded', 'false');
           errorSummary.hidden = false;
           errorMessage.hidden = false;
           formGroup.classList.add('govuk-form-group--error');
@@ -168,7 +184,7 @@
           textarea.classList.remove('govuk-textarea--error');
         }
 
-        /* Option 2 reaches the feedback through this link rather than a radio,
+        /* Option 1 reaches the feedback through this link rather than a radio,
            but it needs the same profile saved and the same empty check - there
            is nothing to give feedback on otherwise. */
         document.getElementById('get-ai-feedback').addEventListener('click', function (event) {
@@ -186,7 +202,7 @@
 
           const profile = textarea.value.trim();
           const choice = document.querySelector('input[name="aiFeedback"]:checked');
-          const wantsFeedback = !isOption2 && choice && choice.value === 'yes';
+          const wantsFeedback = !usesButtons && choice && choice.value === 'yes';
 
           /* Feedback needs something to work with, so an empty profile is the one
              case that stops here rather than saving and moving on. */
@@ -198,7 +214,11 @@
           Store.write({ profile: profile });
 
           if (wantsFeedback) {
-            window.location.href = 'job-title.html';
+            Store.write({ jobTitle: jobTitle.value.trim() });
+            /* Asking for feedback here writes it afresh about the profile as it
+               stands now, as the option 1 job title page does. */
+            forgetFeedback();
+            window.location.href = afterJobTitle();
             return;
           }
 
