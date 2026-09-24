@@ -25,7 +25,7 @@
             <span class="govuk-caption-l">Personal profile</span>
             <h1 class="govuk-heading-l">AI feedback</h1>
 
-            <p class="govuk-body" id="feedback-loading">Thinking about what you&rsquo;ve written&hellip;</p>
+            <p class="govuk-body" id="feedback-loading" aria-live="polite">Looking at what you&rsquo;ve entered&hellip;</p>
 
             <div class="govuk-warning-text" id="feedback-error" hidden>
               <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -75,6 +75,23 @@
         const body = document.getElementById('feedback-body');
         const accordion = document.getElementById('feedback-accordion');
 
+        /* The feedback takes 7-9 seconds, so five phrases two seconds apart
+           see it through. It holds on the last one rather than starting over
+           if the request runs long. */
+        const LOADING_PHRASES = [
+          'Looking at what you\u2019ve entered\u2026',
+          'Checking against the job you want to apply for\u2026',
+          'Getting your feedback together\u2026',
+          'Wrapping it up\u2026',
+          'Adding the final polish\u2026',
+        ];
+        let phrase = 0;
+        const loadingTimer = setInterval(function () {
+          if (phrase === LOADING_PHRASES.length - 1) return clearInterval(loadingTimer);
+          phrase += 1;
+          loading.textContent = LOADING_PHRASES[phrase];
+        }, 2000);
+
         function render(feedback) {
           document.getElementById('feedback-summary').textContent = feedback.summary;
 
@@ -103,6 +120,7 @@
             '</div>';
           }).join('');
 
+          clearInterval(loadingTimer);
           loading.hidden = true;
           body.hidden = false;
 
