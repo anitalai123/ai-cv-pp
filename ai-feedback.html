@@ -16,7 +16,7 @@
     <header data-workhub-header></header>
 
     <div class="govuk-width-container">
-      <a href="job-title.html" class="govuk-back-link">Back</a>
+      <a href="job-title.html" class="govuk-back-link" id="feedback-back-link">Back</a>
 
       <main class="govuk-main-wrapper" id="main-content">
         <div class="govuk-grid-row">
@@ -65,6 +65,13 @@
     <script src="assets/ai-flow.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
+        /* Back retraces the way in: "We need more about you" sits between the
+           job title and this page whenever a section is still Not started.
+           Once none are, that page only forwards here, so Back skips it. */
+        if (outstandingSections().length) {
+          document.getElementById('feedback-back-link').href = 'more-about-you.html';
+        }
+
         const loading = document.getElementById('feedback-loading');
         const body = document.getElementById('feedback-body');
         const accordion = document.getElementById('feedback-accordion');
