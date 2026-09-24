@@ -66,22 +66,60 @@ if (skillsForm) {
   const container = document.getElementById('skills');
   const saved = Store.read().skills || [];
 
+  /* Four empty fields to start, or one per skill already entered if there are
+     more than that. */
+  const STARTING_FIELDS = 4;
+
   function skillField(index) {
     return '<div class="govuk-form-group">' +
       '<label class="govuk-label govuk-label--s" for="skill-' + index + '">Skill ' + index + '</label>' +
       '<input class="govuk-input" id="skill-' + index + '" name="skill" type="text" maxlength="128">' +
+      '<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">' +
+        '<a class="govuk-link" href="#" data-action="remove">Remove' +
+        '<span class="govuk-visually-hidden"> skill ' + index + '</span></a>' +
+      '</p>' +
     '</div>';
   }
 
-  /* One empty field to start, or one per skill already entered. */
-  const count = Math.max(saved.length, 1);
-  for (let i = 0; i < count; i++) addRepeatable(container, skillField);
-  container.querySelectorAll('input[name="skill"]').forEach(function (input, i) {
-    input.value = saved[i] || '';
-  });
+  /* Rebuilt from scratch so the labels stay numbered 1, 2, 3... after one is
+     removed from the middle. */
+  function renderSkills(values) {
+    container.innerHTML = '';
+    values.forEach(function () { addRepeatable(container, skillField); });
+    container.querySelectorAll('input[name="skill"]').forEach(function (input, i) {
+      input.value = values[i];
+    });
+  }
+
+  function currentSkills() {
+    return Array.prototype.map.call(container.querySelectorAll('input[name="skill"]'), function (input) {
+      return input.value;
+    });
+  }
+
+  const initial = saved.slice();
+  while (initial.length < STARTING_FIELDS) initial.push('');
+  renderSkills(initial);
 
   document.getElementById('add-skill').addEventListener('click', function () {
     addRepeatable(container, skillField, true);
+  });
+
+  container.addEventListener('click', function (event) {
+    const link = event.target.closest('a[data-action="remove"]');
+    if (!link) return;
+    event.preventDefault();
+
+    const fields = Array.prototype.slice.call(container.children);
+    const at = fields.indexOf(link.closest('.govuk-form-group'));
+    const values = currentSkills();
+    values.splice(at, 1);
+    renderSkills(values);
+
+    /* Focus would otherwise drop to the top of the page with the removed link. */
+    const next = container.children[Math.min(at, values.length - 1)];
+    const target = next ? next.querySelector('input') : document.getElementById('add-skill');
+    target.focus();
   });
 
   skillsForm.addEventListener('submit', function (event) {

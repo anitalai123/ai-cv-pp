@@ -59,7 +59,7 @@ development only: the deployed site is served by Vercel.
 | `education-type.html` | `/cv/create/education/type` | Qualification type and institution. |
 | `education-subjects.html` | dynamic route | Repeatable subject and grade pairs. |
 | `education-review.html` | `/cv/create/education/review` | Summary cards, with Change and Remove. |
-| `skills.html` | `/cv/create/skills` | Repeatable skill inputs, 128 characters each. |
+| `skills.html` | `/cv/create/skills` | Repeatable skill inputs, 128 characters each. Starts with 4, each with a Remove link. |
 | `additional-info.html` | `/cv/create/additional-info` | Custom section title and details. |
 | `additional-info-review.html` | dynamic route | Summary cards for custom sections, with Change and Remove. |
 | `job-title.html` | — | The job the feedback should be tailored to. |
