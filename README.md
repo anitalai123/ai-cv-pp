@@ -175,7 +175,9 @@ the cover page, which shows both options side by side:
 `participant=1` is kept in `sessionStorage` for the rest of the visit. While it
 is set, the Prototype tag in the phase banner is not a link, and opening the
 cover page goes to the task list instead. Participants still enter the password
-first. To see the cover page again yourself, close the tab and open a new one.
+first. Their answers are kept in `sessionStorage` rather than
+`localStorage`, so each participant starts with an empty CV, the answers go when
+the tab is closed, and the demo answers in the same browser are left alone. To see the cover page again yourself, close the tab and open a new one.
 
 To remove the gate, delete the `assets/auth.js` script tag from each page.
 

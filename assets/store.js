@@ -1,4 +1,4 @@
-/* Prototype state. Everything the CV holds lives in one localStorage key so the
+/* Prototype state. Everything the CV holds lives in one storage key so the
    task list can derive its statuses and the flows can hand data to each other.
 
    The key is per option, so the two prototypes hold separate answers and can be
@@ -33,10 +33,18 @@ function storeKey(option) {
   return 'build-a-cv-prototype-' + (option || window.protoOption);
 }
 
+/* Answers are kept in localStorage so a demo survives a closed tab. Participants
+   (see isParticipant in auth.js) get sessionStorage instead: each one starts
+   with an empty CV, and nothing they enter is left for the next person or
+   overwrites the demo answers in this browser. */
+function answerStorage() {
+  return isParticipant() ? sessionStorage : localStorage;
+}
+
 const Store = {
   read() {
     try {
-      return JSON.parse(localStorage.getItem(storeKey())) || {};
+      return JSON.parse(answerStorage().getItem(storeKey())) || {};
     } catch (e) {
       return {};
     }
@@ -45,7 +53,7 @@ const Store = {
   write(patch) {
     const next = Object.assign(this.read(), patch);
     try {
-      localStorage.setItem(storeKey(), JSON.stringify(next));
+      answerStorage().setItem(storeKey(), JSON.stringify(next));
     } catch (e) {
       /* private browsing - the prototype still works, it just will not persist */
     }
@@ -56,7 +64,7 @@ const Store = {
      button there clears its own option and leaves the other alone. */
   clear(option) {
     try {
-      localStorage.removeItem(storeKey(option));
+      answerStorage().removeItem(storeKey(option));
     } catch (e) {}
   },
 };
