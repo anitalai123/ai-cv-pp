@@ -140,7 +140,9 @@ previous page rather than to the list.
 
 Pressing Done (Continue in option 2) on `profile.html` or on any `feedback-edit.html` page remembers
 that page, and the Personal profile link on the task list goes back to it - the
-same piece of feedback included - rather than to `profile-info.html`.
+same piece of feedback included - rather than to `profile-info.html`. The
+exception is Done on the last piece of feedback: the link then goes to
+`profile.html`, showing the profile with every edit made along the way.
 
 Jobs and gaps share one ordered list, so they interleave on the review page the
 way the live service shows them.

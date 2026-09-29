@@ -100,7 +100,9 @@
 
         function finish() {
           save();
-          ProfileResume.leavingFrom();
+          /* Once the last piece of feedback is done, the task list goes back to
+             the profile as it now stands rather than to the feedback. */
+          ProfileResume.leavingFrom(isLast ? 'profile.html' : undefined);
           Flash.set('Personal Profile updated');
           window.location.href = 'task-list.html';
         }

@@ -97,8 +97,10 @@ const Return = {
    survives a closed tab and Reset clears it. */
 const ProfileResume = {
   START: 'profile-info.html',
-  leavingFrom() {
-    Store.write({ profileResume: window.location.pathname.split('/').pop() + window.location.search });
+  /* Defaults to the page being left; the last piece of feedback passes the
+     profile page instead, since there is no more feedback to come back to. */
+  leavingFrom(href) {
+    Store.write({ profileResume: href || window.location.pathname.split('/').pop() + window.location.search });
   },
   href() {
     return Store.read().profileResume || this.START;
