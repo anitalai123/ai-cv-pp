@@ -27,7 +27,8 @@
                 <h2 class="govuk-error-summary__title">There is a problem</h2>
                 <div class="govuk-error-summary__body">
                   <ul class="govuk-list govuk-error-summary__list">
-                    <li><a href="#personal-profile">Your personal profile is empty for us to give feedback</a></li>
+                    <li id="personal-profile-summary-item"><a href="#personal-profile">Your personal profile is empty for us to give feedback</a></li>
+                    <li id="ai-feedback-summary-item" hidden><a href="#ai-feedback-yes">Select if you want AI feedback on your personal profile</a></li>
                   </ul>
                 </div>
               </div>
@@ -74,13 +75,16 @@
 
               <!-- Option 2 only: the AI feedback branch starts here. -->
               <div class="govuk-form-group" id="ai-feedback-group">
-                <fieldset class="govuk-fieldset" aria-describedby="ai-feedback-hint">
+                <fieldset class="govuk-fieldset" aria-describedby="ai-feedback-hint ai-feedback-error">
                   <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-                    Would you like AI feedback?
+                    Do you want AI feedback on your personal profile?
                   </legend>
                   <div id="ai-feedback-hint" class="govuk-hint">
-                    Get tailored feedback based on the information you've entered
+                    AI will read your CV and suggest how to improve your profile, but you decide what to change
                   </div>
+                  <p class="govuk-error-message" id="ai-feedback-error" hidden>
+                    <span class="govuk-visually-hidden">Error:</span> Select if you want AI feedback on your personal profile
+                  </p>
                   <!-- Stacked rather than inline: GOV.UK Frontend does not
                        support conditional reveals on inline radios. -->
                   <div class="govuk-radios" data-module="govuk-radios">
@@ -92,7 +96,11 @@
                     <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-ai-feedback-yes">
                       <div class="govuk-form-group">
                         <label class="govuk-label" for="job-title">Job you are applying for (optional)</label>
-                        <input class="govuk-input" id="job-title" name="jobTitle" type="text">
+                        <div id="job-title-hint" class="govuk-hint">
+                          This helps AI make its feedback fit the job, for example care assistant
+                        </div>
+                        <input class="govuk-input" id="job-title" name="jobTitle" type="text"
+                               aria-describedby="job-title-hint">
                       </div>
                     </div>
                     <div class="govuk-radios__item">
@@ -104,7 +112,7 @@
               </div>
 
               <!-- Option 1 only: these replace option 2's radios, and carry the
-                   preview that option 2 puts under Done. -->
+                   preview that option 2 puts under Continue. -->
               <div class="govuk-button-group" id="profile-option-2-buttons" hidden>
                 <a href="job-title.html" role="button" draggable="false" id="get-ai-feedback"
                    class="govuk-button govuk-button--secondary" data-module="govuk-button">
@@ -115,9 +123,11 @@
                 </button>
               </div>
 
-              <button type="submit" class="govuk-button" data-module="govuk-button">Done</button>
+              <!-- Continue in option 2, since Yes leads on to the feedback rather
+                   than back to the task list. Option 1 sets it back to Done. -->
+              <button type="submit" class="govuk-button" data-module="govuk-button" id="profile-submit">Continue</button>
 
-              <!-- Option 2 only: the preview as a secondary button under Done. -->
+              <!-- Option 2 only: the preview as a secondary button under Continue. -->
               <div id="preview-button-wrapper">
                 <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button">
                   Preview section
@@ -147,6 +157,7 @@
           document.getElementById('get-ai-feedback').innerHTML = AI_ICON + 'Get AI feedback';
           document.getElementById('preview-button-wrapper').hidden = true;
           document.getElementById('ai-feedback-group').hidden = true;
+          document.getElementById('profile-submit').textContent = 'Done';
         }
 
         const textarea = document.getElementById('personal-profile');
@@ -159,6 +170,26 @@
         const errorSummary = document.getElementById('profile-error-summary');
         const errorMessage = document.getElementById('personal-profile-error');
         const formGroup = document.getElementById('personal-profile-group');
+        const choiceSummaryItem = document.getElementById('ai-feedback-summary-item');
+        const choiceError = document.getElementById('ai-feedback-error');
+        const choiceGroup = document.getElementById('ai-feedback-group');
+        const pageTitle = document.title;
+
+        function showErrorSummary(summaryItem) {
+          document.getElementById('personal-profile-summary-item').hidden = summaryItem !== 'profile';
+          choiceSummaryItem.hidden = summaryItem !== 'choice';
+          errorSummary.hidden = false;
+          document.title = 'Error: ' + pageTitle;
+          errorSummary.focus();
+        }
+
+        /* Option 2 asks outright, so the question has to be answered rather than
+           the profile being saved with no choice made. */
+        function showNoChoiceError() {
+          choiceError.hidden = false;
+          choiceGroup.classList.add('govuk-form-group--error');
+          showErrorSummary('choice');
+        }
 
         function showEmptyProfileError() {
           /* Clear the answer so the choice has to be made again once there is
@@ -170,18 +201,20 @@
              from here has to close the job title field by hand. */
           document.getElementById('conditional-ai-feedback-yes').classList.add('govuk-radios__conditional--hidden');
           document.getElementById('ai-feedback-yes').setAttribute('aria-expanded', 'false');
-          errorSummary.hidden = false;
           errorMessage.hidden = false;
           formGroup.classList.add('govuk-form-group--error');
           textarea.classList.add('govuk-textarea--error');
-          errorSummary.focus();
+          showErrorSummary('profile');
         }
 
-        function clearEmptyProfileError() {
+        function clearErrors() {
           errorSummary.hidden = true;
           errorMessage.hidden = true;
           formGroup.classList.remove('govuk-form-group--error');
           textarea.classList.remove('govuk-textarea--error');
+          choiceError.hidden = true;
+          choiceGroup.classList.remove('govuk-form-group--error');
+          document.title = pageTitle;
         }
 
         /* Option 1 reaches the feedback through this link rather than a radio,
@@ -198,11 +231,16 @@
 
         document.getElementById('profile-form').addEventListener('submit', function (event) {
           event.preventDefault();
-          clearEmptyProfileError();
+          clearErrors();
 
           const profile = textarea.value.trim();
           const choice = document.querySelector('input[name="aiFeedback"]:checked');
           const wantsFeedback = !usesButtons && choice && choice.value === 'yes';
+
+          if (!usesButtons && !choice) {
+            showNoChoiceError();
+            return;
+          }
 
           /* Feedback needs something to work with, so an empty profile is the one
              case that stops here rather than saving and moving on. */

@@ -114,9 +114,9 @@ between them are a handful of conditionals, not a second set of pages:
 | | Option 1 | Option 2 |
 | --- | --- | --- |
 | Personal profile on the task list | last of the optional sections | its own section, "3. Write Personal Profile", pushing Check and download to 4 |
-| Way into the AI feedback | a Get AI feedback secondary button | "Would you like AI feedback?" Yes/No radios |
+| Way into the AI feedback | a Get AI feedback secondary button | "Do you want AI feedback on your personal profile?" Yes/No radios, which must be answered |
 | Job title | `job-title.html`, after Get AI feedback | a "Job you are applying for (optional)" field revealed by Yes |
-| Preview | a secondary button beside Get AI feedback | a secondary button under Done |
+| Preview | a secondary button beside Get AI feedback | a secondary button under Continue |
 
 Option 2's radios are stacked rather than inline because GOV.UK Frontend does
 not support conditional reveals on inline radios.
@@ -138,7 +138,7 @@ time so later pages show the edits made on earlier ones. The accordion is set to
 everything collapsed, and the Back link at the top of an edit page returns to the
 previous page rather than to the list.
 
-Pressing Done on `profile.html` or on any `feedback-edit.html` page remembers
+Pressing Done (Continue in option 2) on `profile.html` or on any `feedback-edit.html` page remembers
 that page, and the Personal profile link on the task list goes back to it - the
 same piece of feedback included - rather than to `profile-info.html`.
 
@@ -199,7 +199,7 @@ Feedback is saved with the rest of the answers, so the edit pages show the same
 items the accordion did, a reload does not spend another request, and coming back
 later shows the feedback that was being worked through. Editing the profile
 against it does not replace it; asking for feedback again - `job-title.html` in
-option 1, Yes and Done in option 2 - writes it afresh. Reset on the cover page
+option 1, Yes and Continue in option 2 - writes it afresh. Reset on the cover page
 clears it with everything else.
 
 If the API cannot be reached - no key, no SDK installed, offline - the page
