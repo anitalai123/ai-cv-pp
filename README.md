@@ -153,7 +153,8 @@ links, sign in, Cymraeg, and Preview section. Clicking one does nothing at all â
 
 Every page loads `assets/auth.js` in the head, which sends you to
 `password.html` unless this browser session has been unlocked. The password is
-`star`, and entering it takes you to the cover page. The password page shows a
+`star`, and entering it takes you on to the page you were trying to open - the
+cover page if you came in at the root. The password page shows a
 GOV.UK error summary and inline error on a wrong password, and carries the plain
 GOV.UK header only - no service navigation, phase banner or language toggle.
 
@@ -162,6 +163,19 @@ password is in the source in plain sight and the unlock flag is a
 `sessionStorage` value, so anyone who wants past it can get past it. Real access
 control for the deployed site is Vercel's Deployment Protection, which is set to
 All Deployments.
+
+## Participant links
+
+For unmoderated testing, each option has a link that keeps participants out of
+the cover page, which shows both options side by side:
+
+- Option 1: `task-list.html?option=1&participant=1`
+- Option 2: `task-list.html?option=2&participant=1`
+
+`participant=1` is kept in `sessionStorage` for the rest of the visit. While it
+is set, the Prototype tag in the phase banner is not a link, and opening the
+cover page goes to the task list instead. Participants still enter the password
+first. To see the cover page again yourself, close the tab and open a new one.
 
 To remove the gate, delete the `assets/auth.js` script tag from each page.
 

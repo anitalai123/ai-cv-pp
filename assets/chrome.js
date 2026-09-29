@@ -57,6 +57,17 @@ function renderMinimalHeader() {
     '</div>';
 }
 
+/* The Prototype tag links back to the cover page, except for participants, who
+   are kept out of it (isParticipant is in auth.js). */
+function bannerTag() {
+  if (isParticipant()) {
+    return '<strong class="govuk-tag govuk-phase-banner__content__tag govuk-tag--red">Prototype</strong>';
+  }
+  return '<a class="workhub-banner-home" href="index.html">' +
+    '<strong class="govuk-tag govuk-phase-banner__content__tag govuk-tag--red">Prototype' +
+      '<span class="govuk-visually-hidden"> - go to prototype home</span></strong></a>';
+}
+
 function renderHeader() {
   const navHtml = NAV_ITEMS.map(function (item) {
     const activeItem = item.active ? ' govuk-service-navigation__item--active' : '';
@@ -94,9 +105,7 @@ function renderHeader() {
     '<div class="govuk-width-container">' +
       '<div class="govuk-phase-banner">' +
         '<p class="govuk-phase-banner__content">' +
-          '<a class="workhub-banner-home" href="index.html">' +
-            '<strong class="govuk-tag govuk-phase-banner__content__tag govuk-tag--red">Prototype' +
-              '<span class="govuk-visually-hidden"> - go to prototype home</span></strong></a>' +
+          bannerTag() +
           '<span class="govuk-phase-banner__text">This is a prototype - option ' + (window.protoOption || '1') + '</span>' +
         '</p>' +
       '</div>' +
