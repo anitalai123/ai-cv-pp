@@ -63,7 +63,7 @@ layout work.
 | File | Mirrors | Notes |
 | --- | --- | --- |
 | `password.html` | — | Prototype password gate. The password is `star`. |
-| `index.html` | — | Prototype cover page. Prototype caveats, then an entry button and its own Reset button per option. Not a page from the live service. |
+| `index.html` | — | Prototype cover page. Prototype caveats, then an entry button and its own Reset button for each option and for the iteration after UR. Not a page from the live service. |
 | `task-list.html` | `/cv/create/task-list` | Three sections, statuses derived from saved answers. Four in option 2, which gives the profile its own. |
 | `contact-name.html` | — | Full name. |
 | `contact-details.html` | — | Email and phone checkboxes, each revealing its field when ticked. |
@@ -85,8 +85,8 @@ layout work.
 | `additional-info-review.html` | dynamic route | Summary cards for custom sections, with Change and Remove. |
 | `job-title.html` | — | The job the feedback should be tailored to. Option 1 only. |
 | `more-about-you.html` | — | Lists the sections still Not started before showing feedback. |
-| `ai-feedback.html` | — | Rotating loading phrases, then an overall comment and up to 5 pieces of feedback in an accordion. |
-| `feedback-edit.html` | — | One piece of feedback beside the profile, editable. `?n=` picks which. |
+| `ai-feedback.html` | — | Rotating loading phrases (in the iteration after UR, a spinner and the phrases as a list of steps), then an overall comment and up to 5 pieces of feedback in an accordion, each tagged Done once marked in the iteration after UR, where Done completes the task. |
+| `feedback-edit.html` | — | One piece of feedback beside the profile, editable. Next feedback and Done in options 1 and 2; Mark as done and Next feedback in the iteration after UR. `?n=` picks which. |
 
 Flows, each ending on Done and returning to the task list with a success banner
 and the row marked Completed:
@@ -132,17 +132,40 @@ the sections that page asks for, since the feedback does not use it. Asking for
 feedback on an empty profile shows an error instead - there would be nothing to
 give feedback on.
 
-`feedback-edit.html` walks the items with Next feedback, saving the profile each
-time so later pages show the edits made on earlier ones. The accordion is set to
-`data-remember-expanded="false"`, so Back to all feedback always lands with
-everything collapsed, and the Back link at the top of an edit page returns to the
-previous page rather than to the list.
+In options 1 and 2, `feedback-edit.html` walks the items with Next feedback,
+saving the profile each time so later pages show the edits made on earlier ones.
+Done, or Next feedback on the last item, finishes the task.
 
-Pressing Done (Continue in option 2) on `profile.html` or on any `feedback-edit.html` page remembers
-that page, and the Personal profile link on the task list goes back to it - the
-same piece of feedback included - rather than to `profile-info.html`. The
-exception is Done on the last piece of feedback: the link then goes to
-`profile.html`, showing the profile with every edit made along the way.
+### Iteration after UR
+
+A third entry point on the cover page, `?option=3`, built on option 1: the same
+task list, profile page and job title page (`window.protoLayout` is `'1'`), with
+the AI feedback flow reworked after user research (`window.protoIterated`). Its
+answers are kept and reset separately, like the other two options.
+
+On its `feedback-edit.html`, Mark as
+done saves the profile, marks that piece as done and goes back to
+`ai-feedback.html`, where it carries a green Done tag in place of any Must
+change - in testing, people wanted to see what was left and choose what to
+tackle next. Next feedback, the secondary button, saves and moves on without
+marking: it skips pieces that are done and is hidden when nothing else is left.
+The pieces marked as done are kept as `feedbackDone`, beside the feedback, and
+cleared whenever feedback is asked for again. The accordion is set to
+`data-remember-expanded="false"`, so coming back to the list always lands with
+everything collapsed, and the Back link at the top of an edit page returns to
+the previous page rather than to the list.
+
+In the iteration, on `ai-feedback.html`, Start editing opens the first piece not yet done
+(Continue editing once one is), and Done completes the task and returns to the
+task list. Once every piece is done, Done is the only button.
+
+Pressing Done (Continue in option 2) on `profile.html`, on a `feedback-edit.html`
+page in options 1 and 2, or on `ai-feedback.html` in the iteration, remembers
+that page, and the Personal profile link on the task list goes back to it -
+the same piece of feedback included - rather than to `profile-info.html`. The
+exception is finishing the feedback - Done on its last piece in options 1 and 2,
+or Done once every piece is marked as done in the iteration: the link then goes
+to `profile.html`, showing the profile with every edit made along the way.
 
 Jobs and gaps share one ordered list, so they interleave on the review page the
 way the live service shows them.
@@ -212,6 +235,8 @@ While it waits, the page rotates through five phrases two seconds apart
 ("Looking at what you've entered..." to "Adding the final polish..."), holding
 on the last if the request runs long. They are in `LOADING_PHRASES` in
 `ai-feedback.html`.
+In the iteration after UR the same phrases show as a list of steps beside a
+spinner: ticked once passed, ringed in blue while current, grey until reached.
 
 Feedback is saved with the rest of the answers, so the edit pages show the same
 items the accordion did, a reload does not spend another request, and coming back

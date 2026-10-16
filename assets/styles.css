@@ -111,3 +111,78 @@ body {
 .workhub-must-change-line {
   margin-bottom: 25px;
 }
+
+/* AI feedback loading, iteration after UR only. A spinner beside the heading,
+   then each loading phrase as a step: ticked once passed, ringed in blue while
+   current, grey until reached. */
+.workhub-loading-heading {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.workhub-spinner {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 30px;
+  box-sizing: border-box;
+  border: 8px solid #d2e2f1;
+  border-top-color: #1d70b8;
+  border-left-color: #1d70b8;
+  border-radius: 50%;
+  animation: workhub-spin 1.2s linear infinite;
+}
+
+@keyframes workhub-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workhub-spinner {
+    animation: none;
+  }
+}
+
+.workhub-loading-step {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.workhub-loading-step__icon {
+  flex-shrink: 0;
+  position: relative;
+  width: 26px;
+  height: 26px;
+  box-sizing: border-box;
+  border: 3px solid #b1b4b6;
+  border-radius: 50%;
+}
+
+.workhub-loading-step--pending {
+  color: #505a5f;
+}
+
+.workhub-loading-step--current .workhub-loading-step__icon {
+  border-color: #1d70b8;
+}
+
+.workhub-loading-step--done .workhub-loading-step__icon {
+  border-color: #00703c;
+  background-color: #00703c;
+}
+
+/* The tick: two borders of a small rotated box, drawn in white. */
+.workhub-loading-step--done .workhub-loading-step__icon::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 7px;
+  width: 5px;
+  height: 10px;
+  border: solid #ffffff;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}

@@ -27,6 +27,9 @@
             <p class="govuk-body workhub-must-change-line" id="feedback-must-change" hidden>
               <strong class="govuk-tag workhub-must-change">Must change</strong>
             </p>
+            <p class="govuk-body workhub-must-change-line" id="feedback-done-tag" hidden>
+              <strong class="govuk-tag govuk-tag--green">Done</strong>
+            </p>
 
             <h2 class="govuk-heading-s workhub-feedback-label" id="feedback-label"></h2>
             <div class="govuk-inset-text workhub-inset-text--feedback" id="feedback-details"></div>
@@ -46,12 +49,24 @@
                 </div>
               </div>
 
-              <div class="govuk-button-group">
+              <!-- Options 1 and 2: walk the feedback in order. -->
+              <div class="govuk-button-group" id="feedback-buttons">
                 <button type="submit" class="govuk-button" data-module="govuk-button" id="feedback-next">
                   Next feedback
                 </button>
                 <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="feedback-done">
                   Done
+                </button>
+              </div>
+
+              <!-- Iteration after UR: mark each piece as done and go back to
+                   the list. -->
+              <div class="govuk-button-group" id="feedback-buttons-iterated" hidden>
+                <button type="submit" class="govuk-button" data-module="govuk-button" id="feedback-mark-done">
+                  Mark as done
+                </button>
+                <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="feedback-skip">
+                  Next feedback
                 </button>
               </div>
             </form>
@@ -80,13 +95,10 @@
 
         const n = feedbackIndex(items.length);
         const item = items[n - 1];
-        const isLast = n === items.length;
 
         document.getElementById('feedback-title').textContent = item.title;
         document.getElementById('feedback-details').textContent = item.details;
         document.getElementById('feedback-label').innerHTML = AI_ICON + 'AI feedback';
-        if (item.mustChange) document.getElementById('feedback-must-change').hidden = false;
-
         /* Whatever was written last, including edits made on the feedback page
            before this one. */
         const textarea = document.getElementById('personal-profile');
@@ -98,36 +110,84 @@
           Store.write({ profile: textarea.value.trim() });
         }
 
-        function finish() {
-          save();
-          /* Once the last piece of feedback is done, the task list goes back to
-             the profile as it now stands rather than to the feedback. */
-          ProfileResume.leavingFrom(isLast ? 'profile.html' : undefined);
-          Flash.set('Personal Profile updated');
-          window.location.href = 'task-list.html';
+        if (window.protoIterated) {
+          setUpIterated();
+        } else {
+          setUpOriginal();
         }
 
-        const next = document.getElementById('feedback-next');
-        const done = document.getElementById('feedback-done');
+        function setUpOriginal() {
+          const isLast = n === items.length;
+          if (item.mustChange) document.getElementById('feedback-must-change').hidden = false;
 
-        /* The last piece of feedback has nowhere to go next, so Done is the
-           primary action there instead of a second button. */
-        if (isLast) {
-          done.hidden = true;
-          next.textContent = 'Done';
-        }
-
-        document.getElementById('feedback-form').addEventListener('submit', function (event) {
-          event.preventDefault();
-          if (isLast) {
-            finish();
-            return;
+          function finish() {
+            save();
+            /* Once the last piece of feedback is done, the task list goes back
+               to the profile as it now stands rather than to the feedback. */
+            ProfileResume.leavingFrom(isLast ? 'profile.html' : undefined);
+            Flash.set('Personal Profile updated');
+            window.location.href = 'task-list.html';
           }
-          save();
-          window.location.href = 'feedback-edit.html?n=' + (n + 1);
-        });
 
-        done.addEventListener('click', finish);
+          const next = document.getElementById('feedback-next');
+          const done = document.getElementById('feedback-done');
+
+          /* The last piece of feedback has nowhere to go next, so Done is the
+             primary action there instead of a second button. */
+          if (isLast) {
+            done.hidden = true;
+            next.textContent = 'Done';
+          }
+
+          document.getElementById('feedback-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            if (isLast) {
+              finish();
+              return;
+            }
+            save();
+            window.location.href = 'feedback-edit.html?n=' + (n + 1);
+          });
+
+          done.addEventListener('click', finish);
+        }
+
+        function setUpIterated() {
+          document.getElementById('feedback-buttons').hidden = true;
+          document.getElementById('feedback-buttons-iterated').hidden = false;
+
+          /* Done replaces Must change, as it does on the feedback list. */
+          const done = feedbackDone();
+          if (done.indexOf(n) !== -1) {
+            document.getElementById('feedback-done-tag').hidden = false;
+          } else if (item.mustChange) {
+            document.getElementById('feedback-must-change').hidden = false;
+          }
+
+          /* Marking as done goes back to the list rather than on to the next
+             piece: in testing people wanted to see what was left and choose
+             what to tackle next. */
+          document.getElementById('feedback-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            save();
+            markFeedbackDone(n);
+            window.location.href = 'ai-feedback.html';
+          });
+
+          /* Next feedback moves on without marking this piece as done. It
+             skips pieces that are done, wraps round from the last to any still
+             left before it, and goes when this is the only piece left. */
+          const others = items.map(function (it, i) { return i + 1; }).filter(function (m) {
+            return m !== n && done.indexOf(m) === -1;
+          });
+          const nextN = others.filter(function (m) { return m > n; })[0] || others[0];
+          const skip = document.getElementById('feedback-skip');
+          if (!nextN) skip.hidden = true;
+          skip.addEventListener('click', function () {
+            save();
+            window.location.href = 'feedback-edit.html?n=' + nextN;
+          });
+        }
 
         document.getElementById('feedback-back').addEventListener('click', save);
 

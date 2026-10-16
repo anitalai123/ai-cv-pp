@@ -24,10 +24,17 @@ function currentOption() {
   } catch (e) {
     /* private browsing - fall back to option 1 */
   }
-  return value === '2' ? '2' : '1';
+  return value === '2' || value === '3' ? value : '1';
 }
 
 window.protoOption = currentOption();
+
+/* Option 3 is the iteration after user research: option 1's task list, profile
+   page and job title page, with the AI feedback flow reworked from what was
+   learnt. protoLayout is the option whose pages it shows; protoIterated turns
+   on the reworked feedback. */
+window.protoLayout = window.protoOption === '3' ? '1' : window.protoOption;
+window.protoIterated = window.protoOption === '3';
 
 function storeKey(option) {
   return 'build-a-cv-prototype-' + (option || window.protoOption);
@@ -92,13 +99,13 @@ const Return = {
 
 /* The personal profile page someone left from, so the task list can take them
    back there instead of to the start of the section. Leaving means pressing
-   Done - on the Write a personal profile page or on any of the feedback edit
-   pages - and nothing else moves it. Kept with the answers, per option, so it
+   Done - on the Write a personal profile page, on a feedback edit page, or on
+   the AI feedback page in the iteration after UR - and nothing else moves it. Kept with the answers, per option, so it
    survives a closed tab and Reset clears it. */
 const ProfileResume = {
   START: 'profile-info.html',
-  /* Defaults to the page being left; the last piece of feedback passes the
-     profile page instead, since there is no more feedback to come back to. */
+  /* Defaults to the page being left. Finishing the feedback passes the profile
+     page instead, since there is no more feedback to come back to. */
   leavingFrom(href) {
     Store.write({ profileResume: href || window.location.pathname.split('/').pop() + window.location.search });
   },

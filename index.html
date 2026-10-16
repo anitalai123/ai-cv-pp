@@ -79,6 +79,25 @@
               </button>
             </div>
 
+            <h2 class="govuk-heading-l govuk-!-margin-top-9">Iteration after UR</h2>
+
+            <ul class="govuk-list govuk-list--bullet">
+              <li>Built on <strong>option 1</strong></li>
+              <li>Each piece of AI feedback can be <strong>marked as done</strong>, and shows as Done on the AI feedback page</li>
+              <li><strong>Done button</strong> on the AI feedback page to finish the task</li>
+            </ul>
+
+            <div class="govuk-button-group">
+              <a href="task-list.html?option=3" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+                Go to prototype
+              </a>
+              <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button"
+                      data-reset-option="3" data-reset-name="Iteration after UR">
+                Reset saved answers
+                <span class="govuk-visually-hidden"> for iteration after UR</span>
+              </button>
+            </div>
+
           </div>
         </div>
       </main>
@@ -100,7 +119,7 @@
              mid-flow, and a reset from here means that flow is over. */
           Flash.take();
           Return.take();
-          this.textContent = 'Option ' + option + ' answers cleared';
+          this.textContent = (this.dataset.resetName || 'Option ' + option) + ' answers cleared';
           this.disabled = true;
         });
       });

@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (task.id === 'profile') task.href = ProfileResume.href();
   });
 
-  if (window.protoOption === '2') applyOptionTwoLayout();
+  if (window.protoLayout === '2') applyOptionTwoLayout();
 
   const state = Store.read();
 

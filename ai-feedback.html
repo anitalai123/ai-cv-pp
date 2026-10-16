@@ -22,10 +22,19 @@
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-two-thirds">
 
-            <span class="govuk-caption-l">Personal profile</span>
-            <h1 class="govuk-heading-l">AI feedback</h1>
+            <!-- The spinner and step list are the iteration after UR only.
+                 Options 1 and 2 keep the single rotating phrase. -->
+            <div class="workhub-loading-heading">
+              <span class="workhub-spinner" id="feedback-spinner" aria-hidden="true" hidden></span>
+              <div>
+                <span class="govuk-caption-l">Personal profile</span>
+                <h1 class="govuk-heading-l">AI feedback</h1>
+              </div>
+            </div>
 
             <p class="govuk-body" id="feedback-loading" aria-live="polite">Looking at what you&rsquo;ve entered&hellip;</p>
+
+            <ul class="govuk-list workhub-loading-steps" id="feedback-steps" hidden></ul>
 
             <div class="govuk-warning-text" id="feedback-error" hidden>
               <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -47,9 +56,18 @@
 
               <p class="govuk-body-s govuk-hint">Responses are AI-generated and may be inaccurate.</p>
 
-              <a href="feedback-edit.html?n=1" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
-                Start editing
-              </a>
+              <!-- Done is the iteration after UR only. There, Start editing
+                   goes to the first piece of feedback not yet done, and once
+                   they all are, Done is the only button and takes its place as
+                   the primary one. -->
+              <div class="govuk-button-group">
+                <a href="feedback-edit.html?n=1" role="button" draggable="false" class="govuk-button" data-module="govuk-button" id="feedback-start">
+                  Start editing
+                </a>
+                <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="feedback-finish" hidden>
+                  Done
+                </button>
+              </div>
             </div>
 
           </div>
@@ -85,23 +103,57 @@
           'Wrapping it up\u2026',
           'Adding the final polish\u2026',
         ];
+        const spinner = document.getElementById('feedback-spinner');
+        const steps = document.getElementById('feedback-steps');
+
+        /* The iteration after UR lists every phrase as a step: those passed
+           are ticked, the current one is ringed in blue and the rest wait in
+           grey. The phrase itself still goes to the live region, now visually
+           hidden, so screen readers hear the same thing as before. */
+        function showSteps() {
+          steps.innerHTML = LOADING_PHRASES.map(function (text, i) {
+            const state = i < phrase ? 'done' : i === phrase ? 'current' : 'pending';
+            const status = { done: 'Completed', current: 'In progress', pending: 'Not started' }[state];
+            return '<li class="workhub-loading-step workhub-loading-step--' + state + '">' +
+              '<span class="workhub-loading-step__icon" aria-hidden="true"></span>' +
+              '<span class="govuk-visually-hidden">' + status + ': </span>' +
+              escapeHtml(text.replace(/…$/, '')) +
+            '</li>';
+          }).join('');
+        }
+
         let phrase = 0;
+        if (window.protoIterated) {
+          loading.classList.add('govuk-visually-hidden');
+          spinner.hidden = false;
+          steps.hidden = false;
+          showSteps();
+        }
         const loadingTimer = setInterval(function () {
           if (phrase === LOADING_PHRASES.length - 1) return clearInterval(loadingTimer);
           phrase += 1;
           loading.textContent = LOADING_PHRASES[phrase];
+          if (window.protoIterated) showSteps();
         }, 2000);
 
         function render(feedback) {
           document.getElementById('feedback-summary').textContent = feedback.summary;
 
+          /* Only the iteration after UR marks feedback as done. */
+          const done = window.protoIterated ? feedbackDone() : [];
+          if (window.protoIterated) setUpFinish(feedback.items, done);
+
           accordion.innerHTML = feedback.items.map(function (item, i) {
             const n = i + 1;
+            const isDone = done.indexOf(n) !== -1;
             /* GOV.UK Frontend 6 folded blue into the default tag, so an
-               unmodified tag is the blue one. */
-            const tag = item.mustChange
-              ? '<strong class="govuk-tag workhub-must-change">Must change</strong>'
-              : '';
+               unmodified tag is the blue one. Done replaces Must change: the
+               change has been made. */
+            const tag = isDone
+              ? '<strong class="govuk-tag govuk-tag--green">Done</strong>'
+              : item.mustChange
+                ? '<strong class="govuk-tag workhub-must-change">Must change</strong>'
+                : '';
             return '<div class="govuk-accordion__section">' +
               '<div class="govuk-accordion__section-header">' +
                 '<h2 class="govuk-accordion__section-heading">' +
@@ -113,7 +165,8 @@
               '<div id="feedback-content-' + n + '" class="govuk-accordion__section-content">' +
                 '<p class="govuk-body">' + escapeHtml(item.details) + '</p>' +
                 '<p class="govuk-body">' +
-                  '<a class="govuk-link" href="feedback-edit.html?n=' + n + '">Start editing' +
+                  '<a class="govuk-link" href="feedback-edit.html?n=' + n + '">' +
+                    (isDone ? 'Edit again' : 'Start editing') +
                     '<span class="govuk-visually-hidden"> ' + escapeHtml(item.title) + '</span></a>' +
                 '</p>' +
               '</div>' +
@@ -122,12 +175,39 @@
 
           clearInterval(loadingTimer);
           loading.hidden = true;
+          spinner.hidden = true;
+          steps.hidden = true;
           body.hidden = false;
 
           /* GOV.UK Frontend has already run by now, so the accordion has to be
              started by hand once its sections exist. */
           accordion.setAttribute('data-module', 'govuk-accordion');
           window.initAccordion(accordion);
+        }
+
+        function setUpFinish(items, done) {
+          const notDone = items.map(function (item, i) { return i + 1; })
+            .filter(function (n) { return done.indexOf(n) === -1; });
+
+          const start = document.getElementById('feedback-start');
+          const finish = document.getElementById('feedback-finish');
+          finish.hidden = false;
+          if (notDone.length) {
+            start.href = 'feedback-edit.html?n=' + notDone[0];
+            if (done.length) start.textContent = 'Continue editing';
+          } else {
+            start.hidden = true;
+            finish.classList.remove('govuk-button--secondary');
+          }
+
+          /* Done completes the task. The task list comes back here while there
+             is feedback left to work through, and to the profile once every
+             piece is done. */
+          finish.addEventListener('click', function () {
+            ProfileResume.leavingFrom(notDone.length ? undefined : 'profile.html');
+            Flash.set('Personal Profile updated');
+            window.location.href = 'task-list.html';
+          });
         }
 
         requestFeedback().then(render).catch(function (error) {

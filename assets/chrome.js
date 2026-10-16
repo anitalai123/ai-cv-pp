@@ -106,7 +106,8 @@ function renderHeader() {
       '<div class="govuk-phase-banner">' +
         '<p class="govuk-phase-banner__content">' +
           bannerTag() +
-          '<span class="govuk-phase-banner__text">This is a prototype - option ' + (window.protoOption || '1') + '</span>' +
+          '<span class="govuk-phase-banner__text">This is a prototype - ' +
+            (window.protoIterated ? 'iteration after UR' : 'option ' + (window.protoOption || '1')) + '</span>' +
         '</p>' +
       '</div>' +
       '<div class="workhub-language">English | <a class="govuk-link" href="#">Cymraeg</a></div>' +

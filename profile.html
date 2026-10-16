@@ -149,7 +149,7 @@
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         /* chrome.js is a module, so window.protoOption is set by the time this runs. */
-        const usesButtons = window.protoOption === '1';
+        const usesButtons = window.protoLayout === '1';
         if (usesButtons) {
           document.getElementById('profile-option-2-buttons').hidden = false;
           /* Same stars icon as the feedback pages, so the button reads as the

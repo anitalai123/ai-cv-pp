@@ -34,7 +34,7 @@ function afterJobTitle() {
 /* Where the job title is asked for, for the Back links after it. Option 1 has
    a page of its own; option 2 asks on the profile page, revealed by Yes. */
 function jobTitlePage() {
-  return window.protoOption === '1' ? 'job-title.html' : 'profile.html';
+  return window.protoLayout === '1' ? 'job-title.html' : 'profile.html';
 }
 
 /* ------------------------------------------------------------- feedback */
@@ -51,7 +51,21 @@ function savedFeedback() {
 }
 
 function forgetFeedback() {
-  Store.write({ feedback: null });
+  Store.write({ feedback: null, feedbackDone: [] });
+}
+
+/* The pieces of feedback marked as done, as their 1-based positions. Kept
+   beside the feedback rather than on its items, so marking works for the
+   example feedback too, which is never saved. A fresh set of feedback starts
+   with none done. */
+function feedbackDone() {
+  return Store.read().feedbackDone || [];
+}
+
+function markFeedbackDone(n) {
+  const done = feedbackDone();
+  if (done.indexOf(n) === -1) done.push(n);
+  Store.write({ feedbackDone: done });
 }
 
 function requestFeedback() {
