@@ -85,8 +85,8 @@ layout work.
 | `additional-info-review.html` | dynamic route | Summary cards for custom sections, with Change and Remove. |
 | `job-title.html` | — | The job the feedback should be tailored to. Option 1 only. |
 | `more-about-you.html` | — | Lists the sections still Not started before showing feedback. |
-| `ai-feedback.html` | — | Rotating loading phrases (in the iteration after UR, a spinner and the phrases as a list of steps), then an overall comment and up to 5 pieces of feedback in an accordion, each tagged Done once marked in the iteration after UR, where Done completes the task. |
-| `feedback-edit.html` | — | One piece of feedback beside the profile, editable. Next feedback and Done in options 1 and 2; Mark as done and Next feedback in the iteration after UR. `?n=` picks which. |
+| `ai-feedback.html` | — | Rotating loading phrases (in the iteration after UR, a spinner and the phrases as a list of steps), then an overall comment and up to 5 pieces of feedback - in an accordion in options 1 and 2, and a GOV.UK task list in the iteration after UR, where each shows Must change or Completed and Done completes the task. |
+| `feedback-edit.html` | — | One piece of feedback beside the profile, editable. Next feedback and Done in options 1 and 2; a Mark as done checkbox, Next feedback and Back to all feedback in the iteration after UR. `?n=` picks which. |
 
 Flows, each ending on Done and returning to the task list with a success banner
 and the row marked Completed:
@@ -143,17 +143,19 @@ task list, profile page and job title page (`window.protoLayout` is `'1'`), with
 the AI feedback flow reworked after user research (`window.protoIterated`). Its
 answers are kept and reset separately, like the other two options.
 
-On its `feedback-edit.html`, Mark as
-done saves the profile, marks that piece as done and goes back to
-`ai-feedback.html`, where it carries a green Done tag in place of any Must
-change - in testing, people wanted to see what was left and choose what to
-tackle next. Next feedback, the secondary button, saves and moves on without
-marking: it skips pieces that are done and is hidden when nothing else is left.
-The pieces marked as done are kept as `feedbackDone`, beside the feedback, and
-cleared whenever feedback is asked for again. The accordion is set to
-`data-remember-expanded="false"`, so coming back to the list always lands with
-everything collapsed, and the Back link at the top of an edit page returns to
-the previous page rather than to the list.
+On its `ai-feedback.html`, the feedback is a GOV.UK task list rather than an
+accordion: each piece links to its `feedback-edit.html`, and its status is
+empty by default, a blue Must change tag where the feedback says so, and
+Completed as plain text once marked as done. On `feedback-edit.html`, a Mark as
+done checkbox, ticked if the piece is already done, sits above two buttons that
+both save the profile and the checkbox: Next feedback goes to the next piece
+not yet done, wrapping round, and Back to all feedback, the secondary button,
+goes back to the list and replaces the link of the same name. When every other
+piece is done, Next feedback is hidden and Back to all feedback becomes the
+primary button. The pieces marked as done are
+kept as `feedbackDone`, beside the feedback, and cleared whenever feedback is
+asked for again. The Back link at the top of an edit page returns to the
+previous page rather than to the list.
 
 In the iteration, on `ai-feedback.html`, Start editing opens the first piece not yet done
 (Continue editing once one is), and Done completes the task and returns to the

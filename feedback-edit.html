@@ -27,9 +27,6 @@
             <p class="govuk-body workhub-must-change-line" id="feedback-must-change" hidden>
               <strong class="govuk-tag workhub-must-change">Must change</strong>
             </p>
-            <p class="govuk-body workhub-must-change-line" id="feedback-done-tag" hidden>
-              <strong class="govuk-tag govuk-tag--green">Done</strong>
-            </p>
 
             <h2 class="govuk-heading-s workhub-feedback-label" id="feedback-label"></h2>
             <div class="govuk-inset-text workhub-inset-text--feedback" id="feedback-details"></div>
@@ -59,19 +56,30 @@
                 </button>
               </div>
 
-              <!-- Iteration after UR: mark each piece as done and go back to
-                   the list. -->
+              <!-- Iteration after UR: a checkbox marks the piece as done, and
+                   both buttons save the profile and the checkbox. -->
+              <div class="govuk-form-group" id="feedback-mark-done-group" hidden>
+                <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                  <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="feedback-mark-done" name="markDone" type="checkbox" value="yes">
+                    <label class="govuk-label govuk-checkboxes__label" for="feedback-mark-done">
+                      Mark as done
+                    </label>
+                  </div>
+                </div>
+              </div>
+
               <div class="govuk-button-group" id="feedback-buttons-iterated" hidden>
-                <button type="submit" class="govuk-button" data-module="govuk-button" id="feedback-mark-done">
-                  Mark as done
-                </button>
-                <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="feedback-skip">
+                <button type="submit" class="govuk-button" data-module="govuk-button" id="feedback-next-iterated">
                   Next feedback
+                </button>
+                <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="feedback-to-list">
+                  Back to all feedback
                 </button>
               </div>
             </form>
 
-            <p class="govuk-body">
+            <p class="govuk-body" id="feedback-back-line">
               <a class="govuk-link" href="ai-feedback.html" id="feedback-back">Back to all feedback</a>
             </p>
 
@@ -156,36 +164,54 @@
           document.getElementById('feedback-buttons').hidden = true;
           document.getElementById('feedback-buttons-iterated').hidden = false;
 
-          /* Done replaces Must change, as it does on the feedback list. */
-          const done = feedbackDone();
-          if (done.indexOf(n) !== -1) {
-            document.getElementById('feedback-done-tag').hidden = false;
-          } else if (item.mustChange) {
+          const markDone = document.getElementById('feedback-mark-done');
+          document.getElementById('feedback-mark-done-group').hidden = false;
+          markDone.checked = feedbackDone().indexOf(n) !== -1;
+
+          /* Must change goes once the piece is marked as done, as it does on
+             the feedback list, and nothing takes its place here. */
+          if (item.mustChange && !markDone.checked) {
             document.getElementById('feedback-must-change').hidden = false;
           }
 
-          /* Marking as done goes back to the list rather than on to the next
-             piece: in testing people wanted to see what was left and choose
-             what to tackle next. */
+          function saveAll() {
+            save();
+            markFeedbackDone(n, markDone.checked);
+          }
+
+          /* Next feedback goes to the next piece not yet done, wrapping round
+             from the last to any left before it. Which pieces those are
+             depends on the checkbox, so it is worked out on the way out. */
+          function nextNotDone() {
+            const done = feedbackDone();
+            const others = items.map(function (it, i) { return i + 1; }).filter(function (m) {
+              return m !== n && done.indexOf(m) === -1;
+            });
+            return others.filter(function (m) { return m > n; })[0] || others[0];
+          }
+
+          /* When every other piece is done there is no next one, so Back to
+             all feedback is the only button and takes over as the primary. */
+          const next = document.getElementById('feedback-next-iterated');
+          const toList = document.getElementById('feedback-to-list');
+          if (!nextNotDone()) {
+            next.hidden = true;
+            toList.classList.remove('govuk-button--secondary');
+          }
+
           document.getElementById('feedback-form').addEventListener('submit', function (event) {
             event.preventDefault();
-            save();
-            markFeedbackDone(n);
-            window.location.href = 'ai-feedback.html';
+            saveAll();
+            const nextN = nextNotDone();
+            window.location.href = nextN ? 'feedback-edit.html?n=' + nextN : 'ai-feedback.html';
           });
 
-          /* Next feedback moves on without marking this piece as done. It
-             skips pieces that are done, wraps round from the last to any still
-             left before it, and goes when this is the only piece left. */
-          const others = items.map(function (it, i) { return i + 1; }).filter(function (m) {
-            return m !== n && done.indexOf(m) === -1;
-          });
-          const nextN = others.filter(function (m) { return m > n; })[0] || others[0];
-          const skip = document.getElementById('feedback-skip');
-          if (!nextN) skip.hidden = true;
-          skip.addEventListener('click', function () {
-            save();
-            window.location.href = 'feedback-edit.html?n=' + nextN;
+          /* The grey button takes over from the Back to all feedback link,
+             so the link goes. */
+          document.getElementById('feedback-back-line').hidden = true;
+          toList.addEventListener('click', function () {
+            saveAll();
+            window.location.href = 'ai-feedback.html';
           });
         }
 

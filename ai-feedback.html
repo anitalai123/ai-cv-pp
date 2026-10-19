@@ -54,6 +54,10 @@
               <div class="govuk-accordion" id="feedback-accordion"
                    data-remember-expanded="false"></div>
 
+              <!-- The iteration after UR lists the feedback as a GOV.UK task
+                   list instead of the accordion. -->
+              <ul class="govuk-task-list" id="feedback-tasks" hidden></ul>
+
               <p class="govuk-body-s govuk-hint">Responses are AI-generated and may be inaccurate.</p>
 
               <!-- Done is the iteration after UR only. There, Start editing
@@ -139,21 +143,22 @@
         function render(feedback) {
           document.getElementById('feedback-summary').textContent = feedback.summary;
 
-          /* Only the iteration after UR marks feedback as done. */
-          const done = window.protoIterated ? feedbackDone() : [];
-          if (window.protoIterated) setUpFinish(feedback.items, done);
+          /* Only the iteration after UR marks feedback as done, and it lists
+             the feedback as a task list rather than the accordion. */
+          if (window.protoIterated) {
+            const done = feedbackDone();
+            setUpFinish(feedback.items, done);
+            renderTasks(feedback.items, done);
+            return;
+          }
 
           accordion.innerHTML = feedback.items.map(function (item, i) {
             const n = i + 1;
-            const isDone = done.indexOf(n) !== -1;
             /* GOV.UK Frontend 6 folded blue into the default tag, so an
-               unmodified tag is the blue one. Done replaces Must change: the
-               change has been made. */
-            const tag = isDone
-              ? '<strong class="govuk-tag govuk-tag--green">Done</strong>'
-              : item.mustChange
-                ? '<strong class="govuk-tag workhub-must-change">Must change</strong>'
-                : '';
+               unmodified tag is the blue one. */
+            const tag = item.mustChange
+              ? '<strong class="govuk-tag workhub-must-change">Must change</strong>'
+              : '';
             return '<div class="govuk-accordion__section">' +
               '<div class="govuk-accordion__section-header">' +
                 '<h2 class="govuk-accordion__section-heading">' +
@@ -166,7 +171,7 @@
                 '<p class="govuk-body">' + escapeHtml(item.details) + '</p>' +
                 '<p class="govuk-body">' +
                   '<a class="govuk-link" href="feedback-edit.html?n=' + n + '">' +
-                    (isDone ? 'Edit again' : 'Start editing') +
+                    'Start editing' +
                     '<span class="govuk-visually-hidden"> ' + escapeHtml(item.title) + '</span></a>' +
                 '</p>' +
               '</div>' +
@@ -183,6 +188,38 @@
              started by hand once its sections exist. */
           accordion.setAttribute('data-module', 'govuk-accordion');
           window.initAccordion(accordion);
+        }
+
+        /* Each piece of feedback is a task. No status until there is
+           something to say: Must change as a blue tag, and Completed as plain
+           text once it has been marked as done, which replaces Must change. */
+        function renderTasks(items, done) {
+          const tasks = document.getElementById('feedback-tasks');
+          tasks.innerHTML = items.map(function (item, i) {
+            const n = i + 1;
+            const statusId = 'feedback-status-' + n;
+            const status = done.indexOf(n) !== -1
+              ? 'Completed'
+              : item.mustChange
+                ? '<strong class="govuk-tag">Must change</strong>'
+                : '';
+            return '<li class="govuk-task-list__item govuk-task-list__item--with-link">' +
+              '<div class="govuk-task-list__name-and-hint">' +
+                '<a class="govuk-link govuk-task-list__link" href="feedback-edit.html?n=' + n + '"' +
+                  (status ? ' aria-describedby="' + statusId + '"' : '') + '>' +
+                  escapeHtml(item.title) + '</a>' +
+              '</div>' +
+              '<div class="govuk-task-list__status" id="' + statusId + '">' + status + '</div>' +
+            '</li>';
+          }).join('');
+
+          clearInterval(loadingTimer);
+          loading.hidden = true;
+          spinner.hidden = true;
+          steps.hidden = true;
+          accordion.hidden = true;
+          tasks.hidden = false;
+          body.hidden = false;
         }
 
         function setUpFinish(items, done) {
