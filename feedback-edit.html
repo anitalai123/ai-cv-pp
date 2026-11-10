@@ -56,25 +56,15 @@
                 </button>
               </div>
 
-              <!-- Iteration after UR: a checkbox marks the piece as done, and
-                   both buttons save the profile and the checkbox. -->
-              <div class="govuk-form-group" id="feedback-mark-done-group" hidden>
-                <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                  <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="feedback-mark-done" name="markDone" type="checkbox" value="yes">
-                    <label class="govuk-label govuk-checkboxes__label" for="feedback-mark-done">
-                      Mark as done
-                    </label>
-                  </div>
-                </div>
-              </div>
-
+              <!-- Iteration after UR: both buttons save the profile and go
+                   back to the list, and Mark as completed also marks the piece
+                   as done. -->
               <div class="govuk-button-group" id="feedback-buttons-iterated" hidden>
-                <button type="submit" class="govuk-button" data-module="govuk-button" id="feedback-done-iterated">
-                  Done
-                </button>
                 <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="feedback-to-list">
-                  Back to all feedback
+                  Save and go back
+                </button>
+                <button type="submit" class="govuk-button" data-module="govuk-button" id="feedback-complete">
+                  Mark as completed
                 </button>
               </div>
             </form>
@@ -164,28 +154,20 @@
           document.getElementById('feedback-buttons').hidden = true;
           document.getElementById('feedback-buttons-iterated').hidden = false;
 
-          const markDone = document.getElementById('feedback-mark-done');
-          document.getElementById('feedback-mark-done-group').hidden = false;
-          markDone.checked = feedbackDone().indexOf(n) !== -1;
-
           /* The iteration calls a must change Important, as the feedback list
              does. It goes once the piece is marked as done, and nothing takes
              its place here. */
           const mustChange = document.getElementById('feedback-must-change');
           mustChange.querySelector('.govuk-tag').textContent = 'Important';
-          if (item.mustChange && !markDone.checked) mustChange.hidden = false;
+          if (item.mustChange && feedbackDone().indexOf(n) === -1) mustChange.hidden = false;
 
-          function saveAll() {
-            save();
-            markFeedbackDone(n, markDone.checked);
-          }
-
-          /* Done goes back to the list rather than on to the next piece: in
-             testing people wanted to see what was left and choose what to
-             tackle next. */
+          /* Both buttons go back to the list rather than on to the next piece:
+             in testing people wanted to see what was left and choose what to
+             tackle next. Save and go back leaves the piece as it was. */
           document.getElementById('feedback-form').addEventListener('submit', function (event) {
             event.preventDefault();
-            saveAll();
+            save();
+            markFeedbackDone(n);
             window.location.href = 'ai-feedback.html';
           });
 
@@ -193,7 +175,7 @@
              so the link goes. */
           document.getElementById('feedback-back-line').hidden = true;
           document.getElementById('feedback-to-list').addEventListener('click', function () {
-            saveAll();
+            save();
             window.location.href = 'ai-feedback.html';
           });
         }

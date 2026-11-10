@@ -86,7 +86,7 @@ layout work.
 | `job-title.html` | — | The job the feedback should be tailored to. Option 1 only. |
 | `more-about-you.html` | — | Lists the sections still Not started before showing feedback. |
 | `ai-feedback.html` | — | Rotating loading phrases (in the iteration after UR, a spinner and the phrases as a list of steps), then an overall comment and up to 5 pieces of feedback - in an accordion in options 1 and 2, and a GOV.UK task list in the iteration after UR, where each shows Important or Completed and Done completes the task. |
-| `feedback-edit.html` | — | One piece of feedback beside the profile, editable. Next feedback and Done in options 1 and 2; a Mark as done checkbox, Done and Back to all feedback in the iteration after UR. `?n=` picks which. |
+| `feedback-edit.html` | — | One piece of feedback beside the profile, editable. Next feedback and Done in options 1 and 2; Save and go back and Mark as completed in the iteration after UR. `?n=` picks which. |
 
 Flows, each ending on Done and returning to the task list with a success banner
 and the row marked Completed:
@@ -147,12 +147,11 @@ On its `ai-feedback.html`, the feedback is a GOV.UK task list rather than an
 accordion: each piece links to its `feedback-edit.html`, and its status is
 empty by default, a blue Important tag where the feedback is a must change (also
 on its edit page), and
-Completed as plain text once marked as done. On `feedback-edit.html`, a Mark as
-done checkbox, ticked if the piece is already done, sits above two buttons that
-both save the profile and the checkbox and go back to the list - in testing,
-people wanted to see what was left and choose what to tackle next: Done, and
-Back to all feedback, the secondary button, which replaces the link of the
-same name. The pieces marked as done are
+Completed as plain text once marked as done. On `feedback-edit.html`, two buttons
+both save the profile and go back to the list - in testing, people wanted to
+see what was left and choose what to tackle next: Save and go back, the
+secondary button placed first, which replaces the Back to all feedback link,
+and Mark as completed, which also marks the piece as done. The pieces marked as done are
 kept as `feedbackDone`, beside the feedback, and cleared whenever feedback is
 asked for again. The Back link at the top of an edit page returns to the
 previous page rather than to the list.

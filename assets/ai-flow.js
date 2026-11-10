@@ -62,11 +62,9 @@ function feedbackDone() {
   return Store.read().feedbackDone || [];
 }
 
-/* Marks a piece as done, or with isDone false, as not done again - the
-   checkbox on the edit page can be unticked. */
-function markFeedbackDone(n, isDone) {
-  const done = feedbackDone().filter(function (m) { return m !== n; });
-  if (isDone !== false) done.push(n);
+function markFeedbackDone(n) {
+  const done = feedbackDone();
+  if (done.indexOf(n) === -1) done.push(n);
   Store.write({ feedbackDone: done });
 }
 
