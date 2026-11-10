@@ -16,7 +16,7 @@
     <header data-workhub-header></header>
 
     <div class="govuk-width-container">
-      <a href="profile-info.html" class="govuk-back-link">Back</a>
+      <a href="profile-info.html" class="govuk-back-link" id="profile-back-link">Back</a>
 
       <main class="govuk-main-wrapper" id="main-content">
         <div class="govuk-grid-row">
@@ -148,6 +148,12 @@
     <script src="assets/ai-flow.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
+        /* The iteration after UR has no Add a personal profile page, so Back
+           goes to the task list. */
+        if (window.protoIterated) {
+          document.getElementById('profile-back-link').href = 'task-list.html';
+        }
+
         /* chrome.js is a module, so window.protoOption is set by the time this runs. */
         const usesButtons = window.protoLayout === '1';
         if (usesButtons) {

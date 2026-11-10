@@ -70,8 +70,8 @@
               </div>
 
               <div class="govuk-button-group" id="feedback-buttons-iterated" hidden>
-                <button type="submit" class="govuk-button" data-module="govuk-button" id="feedback-next-iterated">
-                  Next feedback
+                <button type="submit" class="govuk-button" data-module="govuk-button" id="feedback-done-iterated">
+                  Done
                 </button>
                 <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="feedback-to-list">
                   Back to all feedback
@@ -168,48 +168,31 @@
           document.getElementById('feedback-mark-done-group').hidden = false;
           markDone.checked = feedbackDone().indexOf(n) !== -1;
 
-          /* Must change goes once the piece is marked as done, as it does on
-             the feedback list, and nothing takes its place here. */
-          if (item.mustChange && !markDone.checked) {
-            document.getElementById('feedback-must-change').hidden = false;
-          }
+          /* The iteration calls a must change Important, as the feedback list
+             does. It goes once the piece is marked as done, and nothing takes
+             its place here. */
+          const mustChange = document.getElementById('feedback-must-change');
+          mustChange.querySelector('.govuk-tag').textContent = 'Important';
+          if (item.mustChange && !markDone.checked) mustChange.hidden = false;
 
           function saveAll() {
             save();
             markFeedbackDone(n, markDone.checked);
           }
 
-          /* Next feedback goes to the next piece not yet done, wrapping round
-             from the last to any left before it. Which pieces those are
-             depends on the checkbox, so it is worked out on the way out. */
-          function nextNotDone() {
-            const done = feedbackDone();
-            const others = items.map(function (it, i) { return i + 1; }).filter(function (m) {
-              return m !== n && done.indexOf(m) === -1;
-            });
-            return others.filter(function (m) { return m > n; })[0] || others[0];
-          }
-
-          /* When every other piece is done there is no next one, so Back to
-             all feedback is the only button and takes over as the primary. */
-          const next = document.getElementById('feedback-next-iterated');
-          const toList = document.getElementById('feedback-to-list');
-          if (!nextNotDone()) {
-            next.hidden = true;
-            toList.classList.remove('govuk-button--secondary');
-          }
-
+          /* Done goes back to the list rather than on to the next piece: in
+             testing people wanted to see what was left and choose what to
+             tackle next. */
           document.getElementById('feedback-form').addEventListener('submit', function (event) {
             event.preventDefault();
             saveAll();
-            const nextN = nextNotDone();
-            window.location.href = nextN ? 'feedback-edit.html?n=' + nextN : 'ai-feedback.html';
+            window.location.href = 'ai-feedback.html';
           });
 
           /* The grey button takes over from the Back to all feedback link,
              so the link goes. */
           document.getElementById('feedback-back-line').hidden = true;
-          toList.addEventListener('click', function () {
+          document.getElementById('feedback-to-list').addEventListener('click', function () {
             saveAll();
             window.location.href = 'ai-feedback.html';
           });

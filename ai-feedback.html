@@ -60,15 +60,17 @@
 
               <p class="govuk-body-s govuk-hint">Responses are AI-generated and may be inaccurate.</p>
 
-              <!-- Done is the iteration after UR only. There, Start editing
-                   goes to the first piece of feedback not yet done, and once
-                   they all are, Done is the only button and takes its place as
-                   the primary one. -->
+              <!-- Start editing is options 1 and 2. The iteration after UR has
+                   Save and Done instead: each piece of feedback
+                   opens from its own row in the task list. -->
               <div class="govuk-button-group">
                 <a href="feedback-edit.html?n=1" role="button" draggable="false" class="govuk-button" data-module="govuk-button" id="feedback-start">
                   Start editing
                 </a>
-                <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="feedback-finish" hidden>
+                <button type="button" class="govuk-button govuk-button--secondary" data-module="govuk-button" id="feedback-later" hidden>
+                  Save
+                </button>
+                <button type="button" class="govuk-button" data-module="govuk-button" id="feedback-finish" hidden>
                   Done
                 </button>
               </div>
@@ -191,8 +193,9 @@
         }
 
         /* Each piece of feedback is a task. No status until there is
-           something to say: Must change as a blue tag, and Completed as plain
-           text once it has been marked as done, which replaces Must change. */
+           something to say: Important as a blue tag for a must change, and
+           Completed as plain text once it has been marked as done, which
+           replaces Important. */
         function renderTasks(items, done) {
           const tasks = document.getElementById('feedback-tasks');
           tasks.innerHTML = items.map(function (item, i) {
@@ -201,7 +204,7 @@
             const status = done.indexOf(n) !== -1
               ? 'Completed'
               : item.mustChange
-                ? '<strong class="govuk-tag">Must change</strong>'
+                ? '<strong class="govuk-tag">Important</strong>'
                 : '';
             return '<li class="govuk-task-list__item govuk-task-list__item--with-link">' +
               '<div class="govuk-task-list__name-and-hint">' +
@@ -226,16 +229,11 @@
           const notDone = items.map(function (item, i) { return i + 1; })
             .filter(function (n) { return done.indexOf(n) === -1; });
 
-          const start = document.getElementById('feedback-start');
+          document.getElementById('feedback-start').hidden = true;
           const finish = document.getElementById('feedback-finish');
+          const later = document.getElementById('feedback-later');
           finish.hidden = false;
-          if (notDone.length) {
-            start.href = 'feedback-edit.html?n=' + notDone[0];
-            if (done.length) start.textContent = 'Continue editing';
-          } else {
-            start.hidden = true;
-            finish.classList.remove('govuk-button--secondary');
-          }
+          later.hidden = false;
 
           /* Done completes the task. The task list comes back here while there
              is feedback left to work through, and to the profile once every
@@ -243,6 +241,13 @@
           finish.addEventListener('click', function () {
             ProfileResume.leavingFrom(notDone.length ? undefined : 'profile.html');
             Flash.set('Personal Profile updated');
+            window.location.href = 'task-list.html';
+          });
+
+          /* Save leaves for the task list without the success
+             banner, and the task list brings them back here. */
+          later.addEventListener('click', function () {
+            ProfileResume.leavingFrom();
             window.location.href = 'task-list.html';
           });
         }

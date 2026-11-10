@@ -103,7 +103,9 @@ const Return = {
    the AI feedback page in the iteration after UR - and nothing else moves it. Kept with the answers, per option, so it
    survives a closed tab and Reset clears it. */
 const ProfileResume = {
-  START: 'profile-info.html',
+  /* The iteration after UR drops the Add a personal profile page and starts on
+     Write a personal profile. */
+  START: window.protoIterated ? 'profile.html' : 'profile-info.html',
   /* Defaults to the page being left. Finishing the feedback passes the profile
      page instead, since there is no more feedback to come back to. */
   leavingFrom(href) {
